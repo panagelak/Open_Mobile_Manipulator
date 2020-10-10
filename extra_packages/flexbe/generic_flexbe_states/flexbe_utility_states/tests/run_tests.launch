@@ -1,0 +1,15 @@
+<launch>
+        <arg name="path" value="$(find flexbe_utility_states)/tests" />
+
+        <!-- Run with simulation. -->
+
+        <include file="$(find flexbe_testing)/launch/flexbe_testing.launch">
+                <arg name="compact_format" value="true" />
+                <arg name="testcases" value="
+
+                        $(arg path)/start_record_logs_state_import.test
+                        $(arg path)/stop_record_logs_state_import.test
+
+                " />
+        </include>
+</launch>

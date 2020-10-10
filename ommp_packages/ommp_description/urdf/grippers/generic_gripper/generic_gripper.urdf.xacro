@@ -1,0 +1,157 @@
+<?xml version='1.0'?>
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Include Inertia Macros -->
+  <xacro:include filename="$(find ommp_description)/urdf/macros/inertia_macros.urdf.xacro" />
+
+  <!-- Include Transmissions -->
+  <xacro:include filename="$(find ommp_description)/urdf/grippers/generic_gripper/generic_gripper.transmissions.xacro" />
+ 
+  <!-- Instantiate Transmissions -->
+  <xacro:generic_gripper_transmission prefix="${prefix}" hw_interface="${transmission_hw_interface}" />
+
+  <!-- If we use simulation include Gazebo Stuff -->
+  <xacro:if value="$(arg sim)">
+
+      <!-- Gazebo gripper -->
+      <xacro:include filename="$(find ommp_description)/urdf/grippers/generic_gripper/generic_gripper.gazebo.xacro" />
+       <xacro:generic_gripper_gazebo prefix="${prefix}" />
+      
+  </xacro:if>
+
+
+<xacro:property name="m_ee" value="0.01" />
+<xacro:property name="m_f1" value="0.01" />
+<xacro:property name="m_f2" value="0.01" />
+
+<xacro:macro name="generic_gripper" params="prefix parent
+  transmission_hw_interface:=hardware_interface/PositionJointInterface
+  safety_limits:=false safety_pos_margin:=0.15
+  safety_k_position:=20">
+
+  <link name="${prefix}ee_base" >
+    
+    <visual>
+      <xacro:insert_block name="ee_base_origin" />
+      <geometry>
+        <box size = "${ee_base_x} ${ee_base_y} ${ee_base_z}"/>
+      </geometry>
+      <material name="Blue">
+        <color rgba="0.0 0.0 1.0 1.0"/>
+      </material>
+    </visual>
+    
+    <collision>
+      <xacro:insert_block name="ee_base_origin" />
+      <geometry>
+        <box size = "${ee_base_x * collision_factor} ${ee_base_y * collision_factor} ${ee_base_z * collision_factor}"/>
+      </geometry>
+    </collision>
+    <xacro:if value="${use_dummy_inertial}">
+      <xacro:inertial_dummy>
+        <xacro:insert_block name="ee_base_origin" />
+      </xacro:inertial_dummy>
+    </xacro:if>
+    <xacro:unless value="${use_dummy_inertial}">
+      <xacro:box_inertial x = "${ee_base_x}" y = "${ee_base_y}" z = "${ee_base_z}" mass="${ee_base_mass}">
+        <xacro:insert_block name="ee_base_origin" />
+      </xacro:box_inertial>
+    </xacro:unless>
+  </link>
+
+  <joint name="ee_footprint_joint" type="fixed">
+    <parent link="${parent}"/>
+    <child link="${prefix}ee_base"/>
+    <xacro:insert_block name="ee_base_joint_origin" />
+  </joint>
+
+  <link name="${prefix}finger1" >
+    
+    <visual>
+      <xacro:insert_block name="finger1_origin" />
+      <geometry>
+        <box size = "${finger1_x} ${finger1_y} ${finger1_z}"/>
+      </geometry>
+      <material name="Red">
+        <color rgba="1.0 0.0 0.0 1.0"/>
+      </material>
+    </visual>
+    
+    <collision>
+      <xacro:insert_block name="finger1_origin" />
+      <geometry>
+        <box size = "${finger1_x * collision_factor} ${finger1_y * collision_factor} ${finger1_z * collision_factor}"/>
+      </geometry>
+    </collision>
+    <xacro:if value="${use_dummy_inertial}">
+      <xacro:inertial_dummy>
+        <xacro:insert_block name="finger1_origin" />
+      </xacro:inertial_dummy>
+    </xacro:if>
+    <xacro:unless value="${use_dummy_inertial}">
+      <xacro:box_inertial x = "${finger1_x}" y = "${finger1_y}" z = "${finger1_z}" mass="${finger1_mass}">
+        <xacro:insert_block name="finger1_origin" />
+      </xacro:box_inertial>
+    </xacro:unless>
+  </link>
+
+  <joint name="${prefix}finger1_joint" type="prismatic">
+    <parent link="${prefix}ee_base" />
+    <child link = "${prefix}finger1" />
+    <xacro:insert_block name="finger1_joint_origin" />
+    <xacro:insert_block name="finger1_joint_axis" />
+    <limit lower="${finger1_lower_limit}" upper="${finger1_upper_limit}" effort="330.0" velocity="2.16"/>
+    <xacro:if value="${safety_limits}">
+      <safety_controller soft_lower_limit="${finger1_lower_limit + safety_pos_margin}" soft_upper_limit="${finger1_upper_limit - safety_pos_margin}" k_position="${safety_k_position}" k_velocity="0.0"/>
+    </xacro:if>
+    <dynamics damping="0.0" friction="0.0"/>
+  </joint>
+
+  <link name="${prefix}finger2" >
+    
+    <visual>
+      <xacro:insert_block name="finger2_origin" />
+      <geometry>
+        <box size = "${finger2_x} ${finger2_y} ${finger2_z}"/>
+      </geometry>
+      <material name="Red">
+        <color rgba="1.0 0.0 0.0 1.0"/>
+      </material>
+    </visual>
+    
+    <collision>
+      <xacro:insert_block name="finger2_origin" />
+      <geometry>
+        <box size = "${finger2_x * collision_factor} ${finger2_y * collision_factor} ${finger2_z * collision_factor}"/>
+      </geometry>
+    </collision>
+    <xacro:if value="${use_dummy_inertial}">
+      <xacro:inertial_dummy>
+        <xacro:insert_block name="finger2_origin" />
+      </xacro:inertial_dummy>
+    </xacro:if>
+    <xacro:unless value="${use_dummy_inertial}">
+      <xacro:box_inertial x = "${finger2_x}" y = "${finger2_y}" z = "${finger2_z}" mass="${finger2_mass}">
+        <xacro:insert_block name="finger2_origin" />
+      </xacro:box_inertial>
+    </xacro:unless>
+  </link>
+
+  <joint name="${prefix}finger2_joint" type="prismatic">
+    <parent link="${prefix}ee_base" />
+    <child link = "${prefix}finger2" />
+    <xacro:insert_block name="finger2_joint_origin" />
+    <xacro:insert_block name="finger2_joint_axis" />
+    <limit lower="${finger2_lower_limit}" upper="${finger2_upper_limit}" effort="330.0" velocity="2.16"/>
+    <xacro:if value="${safety_limits}">
+      <safety_controller soft_lower_limit="${finger2_lower_limit + safety_pos_margin}" soft_upper_limit="${finger2_upper_limit - safety_pos_margin}" k_position="${safety_k_position}" k_velocity="0.0"/>
+    </xacro:if>
+    <dynamics damping="0.0" friction="0.0"/>
+  </joint>
+
+
+  </xacro:macro>
+
+</robot>
+

@@ -1,0 +1,38 @@
+arm_controller:
+  type: position_controllers/JointTrajectoryController
+  joints:
+     - shoulder_pan_joint
+     - shoulder_lift_joint
+     - elbow_joint
+     - wrist_1_joint
+     - wrist_2_joint
+     - wrist_3_joint
+  gains:
+      shoulder_pan_joint: {p: 100, i: 0.01, d: 1}
+      shoulder_lift_joint: {p: 100, i: 0.01, d: 1}
+      elbow_joint: {p: 100, i: 0.01, d: 1}
+      wrist_1_joint: {p: 100, i: 0.01, d: 1}
+      wrist_2_joint: {p: 100, i: 0.01, d: 1}
+      wrist_3_joint: {p: 100, i: 0.01, d: 1}
+  constraints:
+      goal_time: 10.0
+
+  state_publish_rate: 50
+  action_monitor_rate: 30
+  stop_trajectory_duration: 0
+
+#==================================================================#
+#====== Group Position Controller - USED For Manual Guidance ======#
+#==================================================================#
+
+joint_group_position_controller:
+  type: position_controllers/JointGroupPositionController
+  joints:
+     - shoulder_pan_joint
+     - shoulder_lift_joint
+     - elbow_joint
+     - wrist_1_joint
+     - wrist_2_joint
+     - wrist_3_joint
+
+

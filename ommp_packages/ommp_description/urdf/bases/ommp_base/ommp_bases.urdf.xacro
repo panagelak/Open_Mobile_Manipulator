@@ -1,0 +1,153 @@
+<?xml version="1.0" ?>
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  
+
+  <xacro:if value="$(arg sim)">
+      
+      <xacro:include filename="$(find ommp_description)/urdf/bases/ommp_base/ommp_bases.gazebo.xacro" />
+  </xacro:if>
+  
+  <xacro:macro name="lynxbot_bases">
+
+    <link name="robot_footprint"></link>
+
+    <joint name="robot_footprint_joint" type="fixed">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <parent link="robot_footprint"/>
+      <child link="chassis" />
+    </joint>
+
+    <link name='chassis'>
+
+
+     <inertial>
+       <origin xyz="0 0 0" rpy="0 0 0"/>
+       <mass value="100"/>
+       <inertia ixx="0.3136"  ixy="0"  ixz="0" iyy="0.3922" iyz="0" izz="0.4485" />
+     </inertial>
+
+      <collision name='collision'>
+        <origin xyz="0 0 0" rpy=" 0 0 0"/> 
+        <geometry>
+          <xacro:insert_block name="base_size" />
+        </geometry>
+      </collision>
+
+      <visual name='chassis_visual'>
+        <origin xyz="0 0 0" rpy=" 0 0 0"/>
+        <geometry>
+          <xacro:insert_block name="base_size" />
+        </geometry>
+        <material name="green">
+          <color rgba="0 1 0 1"/>
+        </material>
+      </visual>
+
+    </link>
+
+    <link name="upper_base">
+
+      <inertial>
+        <mass value="0.01"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <inertia
+          ixx="0.0000001" ixy="0" ixz="0"
+          iyy="0.0000001" iyz="0"
+          izz="0.0000001"
+        />
+      </inertial>
+      <visual>
+        <geometry>
+          <xacro:insert_block name="upper_base_size" />
+        </geometry>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <material name="red">
+          <color rgba="1 0 0 1"/>
+        </material>
+      </visual>
+      <collision>
+        <geometry>
+          <xacro:insert_block name="upper_base_size" />
+        </geometry>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+      </collision>
+    </link>
+
+    <joint name="upper_base_joint" type="fixed">
+      <xacro:insert_block name="upper_base_joint_origin" />
+      <parent link="chassis"/>
+      <child link="upper_base" />
+    </joint>
+
+    <link name="kinect_base1">
+
+      <inertial>
+        <mass value="0.01"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <inertia
+          ixx="0.0000001" ixy="0" ixz="0"
+          iyy="0.0000001" iyz="0"
+          izz="0.0000001"
+        />
+      </inertial>
+      <visual>
+        <geometry>
+          <xacro:insert_block name="kinect_base1_size" />
+        </geometry>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <material name="green">
+          <color rgba="0 1 0 1"/>
+        </material>
+      </visual>
+      <collision>
+        <geometry>
+          <xacro:insert_block name="kinect_base1_size" />
+        </geometry>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+      </collision>
+    </link>
+
+    <joint name="kinect_base_joint1" type="fixed">
+      <xacro:insert_block name="kinect_base1_joint_origin" />
+      <parent link="upper_base"/>
+      <child link="kinect_base1" />
+    </joint>
+
+    <link name="kinect_base2">
+
+      <inertial>
+        <mass value="0.01"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <inertia
+          ixx="0.0000001" ixy="0" ixz="0"
+          iyy="0.0000001" iyz="0"
+          izz="0.0000001"
+        />
+      </inertial>
+      <visual>
+        <geometry>
+          <xacro:insert_block name="kinect_base2_size" />
+        </geometry>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <material name="red">
+          <color rgba="1 0 0 1"/>
+        </material>
+      </visual>
+      <collision>
+        <geometry>
+          <xacro:insert_block name="kinect_base2_size" />
+        </geometry>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+      </collision>
+    </link>
+
+    <joint name="kinect_base_joint2" type="fixed">
+      <xacro:insert_block name="kinect_base2_joint_origin" />
+      <parent link="kinect_base1"/>
+      <child link="kinect_base2" />
+    </joint>
+
+  </xacro:macro>
+
+</robot>

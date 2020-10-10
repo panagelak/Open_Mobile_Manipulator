@@ -1,0 +1,8 @@
+laser_scan_topic: scan        # topic where the lidar scans are being published
+odom_topic: /odom_rf2o #_rf2o             # topic where tu publish the odometry estimations
+publish_tf: true                 # wheter or not to publish the tf::transform (base->odom)
+base_frame_id: base_link  # A tf transform from the laser_frame to the base_frame is mandatory
+odom_frame_id: odom #_rf2o               # frame_id (tf) to publish the odometry estimations    
+init_pose_from_topic: ""
+freq: 6                        # Execution frequency.
+verbose: false

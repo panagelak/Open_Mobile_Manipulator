@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="Example Behavior">
+
+	<executable package_path="lynxbot_flexbe_behaviors.example_behavior_sm" class="ExampleBehaviorSM" />
+	<tagstring>demo</tagstring>
+	<author>Philipp Schillinger</author>
+	<date>Fri Aug 21 2015</date>
+	<description>
+		This is a simple example for a behavior.
+	</description>
+
+
+	<!-- Contained Behaviors -->
+
+	<!-- Available Parameters -->
+	<params>
+
+		<param type="numeric" name="waiting_time" default="3" label="Waiting Time" hint="Sets the time to wait after logging.">
+			<min value="1" />
+			<max value="5" />
+		</param>
+
+	</params>
+
+
+</behavior>

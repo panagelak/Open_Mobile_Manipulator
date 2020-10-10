@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<launch>
+
+  <!-- robot parameters -->
+  <arg name="sim" default="true"/>
+  <arg name="robot" default="ommp_sim"/>
+  
+  <!--Gazebo parameters-->
+  <arg name="world" default="jackal_race"/> <!--empty, rtabmap, navigation, object_recognition1-->
+  <arg name="paused" default="false"/>
+  <arg name="use_sim_time" default="true"/>
+  <arg name="gui" default="true"/>
+  <arg name="headless" default="false"/>
+  <arg name="debug" default="false"/>
+
+  <!-- launch the gazebo with the specified world -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find ommp_bringup)/worlds/$(arg world).world"/>
+    <arg name="paused" value="$(arg paused)"/>
+    <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+    <arg name="gui" value="$(arg gui)"/>
+    <arg name="headless" value="$(arg headless)"/>
+    <arg name="debug" value="$(arg debug)"/>
+  </include>
+
+  <!-- Load the Robot description -->
+  
+  <!-- send urdf to param server -->
+  <param name="robot_description" command="$(find xacro)/xacro '$(find ommp_description)/urdf/robots/$(arg robot)/$(arg robot).urdf.xacro' sim:=$(arg sim)" />
+  <!--Start robot state publisher -->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+
+  <!-- load controllers to param server-->
+  <rosparam file="$(find ommp_control)/config/joint_state_controller.yaml" command="load"/>
+  <rosparam file="$(find ommp_control)/config/arm_control.yaml" command="load"/>
+  <rosparam file="$(find ommp_control)/config/gripper_position_control.yaml" command="load"/>
+  <rosparam file="$(find ommp_control)/config/kinect_control_sim.yaml" command="load"/>
+  <!--rosparam file="$(find ommp_control)/config/hardware_interface_settings.yaml" command="load"/-->
+  <rosparam file="$(find ommp_control)/config/diff_control.yaml" command="load"/>
+
+  <!-- launch the controller manager for ros control -->
+  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+    output="screen" args="joint_state_controller  ommp_velocity_controller arm_controller gripper_controller kinect_controller"/>
+  
+  <!-- load other controllers for manual guidance - we need to switch between them through a service call -->
+  <node name="controller_manager_group" pkg="controller_manager" type="controller_manager" respawn="false" output="screen" args="load joint_group_position_controller" />
+
+  <!-- robot localization sensor fusion wheel encoders + imu -->
+  <node pkg="robot_localization" type="ekf_localization_node" name="ekf_localization">
+    <rosparam file="$(find ommp_control)/config/robot_localization.yaml" command="load" />
+    <!--remap from="odometry/filtered" to="odom_combined"/-->
+  </node>
+  
+  <!--spawn the robot in gazebo world-->  
+  <node name="urdf_spawner_$(arg robot)" pkg="gazebo_ros" type="spawn_model" respawn="false" 
+  output="screen" args="-urdf -param robot_description -model ommp_sim -z 0.3"/>
+
+  <!-- Include Sim Helpers -->
+  <include file="$(find ommp_bringup)/launch/sim_helpers.launch"/>
+  
+</launch>
+
+

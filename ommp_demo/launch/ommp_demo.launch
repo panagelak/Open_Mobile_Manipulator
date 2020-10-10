@@ -1,0 +1,9 @@
+<launch>
+
+  <arg name="list_actions" default="false" />
+
+  <node pkg="ommp_demo" type="ommp_demo" name="ommp_demo" output="screen">
+    <param name="list_actions" value="$(arg list_actions)" />
+  </node>
+
+</launch>

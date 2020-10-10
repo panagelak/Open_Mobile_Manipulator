@@ -1,0 +1,13 @@
+<launch>
+  
+  <!-- The path_ekf_plotter node -->	
+  <node name="path_ekf_plotter" type="path_ekf_plotter.py" pkg="odom_to_trajectory">
+  </node>
+  
+  <!-- The path_odom_plotter node -->
+  <node name="path_odom_plotter" type="path_odom_plotter.py" pkg="odom_to_trajectory">
+  </node>
+
+
+
+</launch>

@@ -1,0 +1,15 @@
+##Description: Attaches or Detaches two Objects in The Gazebo simulation
+
+bool attach
+string model_name_1
+string link_name_1
+string model_name_2
+string link_name_2
+
+integration/ActionRequest action_request
+---
+#result definition
+integration/ActionResult action_result
+---
+#feedback
+integration/ActionFeedback action_feedback

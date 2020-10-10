@@ -1,0 +1,15 @@
+gripper_controller:
+  type: position_controllers/JointTrajectoryController
+  joints:
+     - finger1_joint
+     - finger2_joint
+  gains:
+      finger1_joint: {p: 100, i: 0.01, d: 1}
+      finger2_joint: {p: 100, i: 0.01, d: 1}
+  constraints:
+      goal_time: 10.0
+
+  
+  state_publish_rate:  50
+  action_monitor_rate: 30
+  stop_trajectory_duration: 0

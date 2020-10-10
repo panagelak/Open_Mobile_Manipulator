@@ -1,0 +1,119 @@
+#!/usr/bin/env python
+
+import math
+import random
+import rospy
+import rospkg
+import std_msgs
+import tf
+import sys
+
+from gazebo_msgs.srv import GetPhysicsProperties
+from gazebo_msgs.srv import SetPhysicsProperties
+from gazebo_msgs.srv import GetModelState
+from gazebo_msgs.srv import SetModelState
+from gazebo_msgs.srv import SetModelStateRequest
+from gazebo_msgs.srv import SpawnModel
+from gazebo_msgs.srv import DeleteModel
+from geometry_msgs.msg import Pose
+
+# Service message
+from integration.srv import SpawnModels, SpawnModelsResponse
+
+# All Product Id's
+Product_IDs_list = ['C01353100-011', 'C01354100-003', 'C01355100-007', 'C01355101-007',
+                    'C01357120-007', 'C01357130-005', 'C01357140-007', 'C01357150-007', 'C01357160-005']
+pub = rospy.Publisher('/schedule_executor/product_id',
+                      std_msgs.msg.String, queue_size=10, latch=True)
+
+
+def spawn_model(postfix, model_name, pos_x, pos_y, pos_z, ori_x, ori_y, ori_z, ori_w, product_id=""):
+    """ Spawns a model.
+
+        Args: None
+
+        Returns: None
+    """
+    initial_pose = Pose()
+
+    initial_pose.position.x = pos_x
+    initial_pose.position.y = pos_y
+    initial_pose.position.z = pos_z
+    initial_pose.orientation.x = ori_x
+    initial_pose.orientation.y = ori_y
+    initial_pose.orientation.z = ori_z
+    initial_pose.orientation.w = ori_w
+
+    rospy.wait_for_service('gazebo/spawn_sdf_model')
+    # Spawn the new model #
+    model_path = rospkg.RosPack().get_path('sofocles_sim')+'/models/'
+    model_xml = ''
+
+    if product_id == "":
+        with open(model_path + model_name + '/model.sdf', 'r') as xml_file:
+            model_xml = xml_file.read().replace('\n', '')
+    else:
+        with open(model_path + model_name + '_' + product_id + '/model.sdf', 'r') as xml_file:
+            model_xml = xml_file.read().replace('\n', '')
+
+    spawn_model_prox = rospy.ServiceProxy('gazebo/spawn_sdf_model', SpawnModel)
+    spawn_model_prox(model_name + postfix, model_xml,
+                     '', initial_pose, 'world')
+
+
+def delete_model(model_name, postfix):
+    # Delete the old model if it's stil around
+    delete_model_prox = rospy.ServiceProxy('gazebo/delete_model', DeleteModel)
+    delete_model_prox(str(str(model_name) + str(postfix)))
+
+
+def spawn_model_human(product_id=""):
+
+    # General start
+    ############################
+    ########## FOR HUMAN #######
+    ############################
+    # '''
+    spawn_model(product_id=product_id, postfix="", model_name="product", pos_x=-3,
+                pos_y=5, pos_z=1.0, ori_x=0, ori_y=0, ori_z=0, ori_w=1)
+    spawn_model(postfix="", model_name="cart",    pos_x=-3, pos_y=5,
+                pos_z=0.0, ori_x=0, ori_y=0, ori_z=0.7071068, ori_w=0.7071068)
+    spawn_model(postfix="", model_name="george",  pos_x=-5.5, pos_y=5,
+                pos_z=0,  ori_x=0, ori_y=0, ori_z=0.7071068, ori_w=0.7071068)
+    # '''
+
+
+def Routine(req):
+    '''
+    Callback function used by the service server to process
+    requests from clients. It returns a SpawnModelsResponse
+    '''
+
+    if req.random:
+        product_id = Product_IDs_list[random.randint(0, 8)]
+    else:
+        product_id = req.product_id
+    rospy.set_param('/product_id', str(product_id))
+
+    if req.delete_human:
+        rospy.loginfo("Deleting models Cart - Human - Product")
+        delete_model(model_name="product", postfix="")
+        delete_model(model_name="cart", postfix="")
+        delete_model(model_name="george", postfix="")
+
+    if req.spawn_human:
+        spawn_model_human(product_id=product_id)
+    #publish product id
+    pub.publish(str(product_id))
+    return SpawnModelsResponse(success=True)
+
+
+if __name__ == '__main__':
+
+    rospy.init_node('spawn_models_server_node')
+    rospy.loginfo("This node spawns the models of the simulation")
+    rospy.set_param('/product_id', str(""))
+
+    s = rospy.Service('/spawn_models_routine', SpawnModels, Routine)
+    rospy.loginfo("Service Server Started")
+    rospy.spin()

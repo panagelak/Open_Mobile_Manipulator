@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- Ommp configuration to view. See ommp_description for details. -->
+  <arg name="robot" default="ommp_sim"/>
+  <arg name="sim" default="true"/>
+
+  <include file="$(find ommp_description)/launch/description.launch">
+    <arg name="robot" value="$(arg robot)" />
+    <arg name="sim" value="$(arg sim)" />
+  </include>
+
+  <node name="joint_state_publisher_gui" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui" />
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find ommp_viz)/rviz/view_robot.rviz" />
+</launch>

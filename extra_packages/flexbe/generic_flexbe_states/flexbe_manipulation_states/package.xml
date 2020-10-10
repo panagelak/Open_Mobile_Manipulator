@@ -1,0 +1,23 @@
+<package>
+  <name>flexbe_manipulation_states</name>
+  <version>1.0.0</version>
+  <description>
+     flexbe_manipulation_states provides a collection of robot-agnostic
+     states related to manipulation and trajectory execution.
+  </description>
+  <maintainer email="schillin@kth.se">Philipp Schillinger</maintainer>
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <run_depend>rospy</run_depend>
+  <run_depend>flexbe_core</run_depend>
+  <run_depend>tf</run_depend>
+  <run_depend>moveit_msgs</run_depend>
+  <run_depend>sensor_msgs</run_depend>
+
+  <export>
+    <flexbe_states />
+  </export>
+
+</package>

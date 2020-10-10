@@ -1,0 +1,89 @@
+<?xml version='1.0'?>
+
+<robot name="ommp_real" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <arg name="sim" default="false"/>
+
+  <!-- Common design Properties-->
+  <xacro:include filename="$(find ommp_description)/urdf/robots/ommp_real/configuration.urdf.xacro" />
+
+  <!-- Include Sensors macros -->
+  
+
+    <!--ydlidar -->
+  <xacro:include filename="$(find ommp_description)/urdf/sensors/ydlidar/ydlidar.urdf.xacro" />
+    <!--imu -->
+  <xacro:include filename="$(find ommp_description)/urdf/sensors/imu/imu.urdf.xacro" />
+    <!-- kinect -->
+  <xacro:include filename="$(find ommp_description)/urdf/sensors/kinect/kinect_real.urdf.xacro" />
+
+  <!-- Include Bases-->
+  <xacro:include filename="$(find ommp_description)/urdf/bases/ommp_base_real/ommp_bases.urdf.xacro" />
+
+  <!-- Wheel Macro-->
+  <xacro:include filename="$(find ommp_description)/urdf/wheels/costum_wheel/costum_wheel.urdf.xacro" />
+
+  <!-- Incude Inertia macros -->
+  <xacro:include filename="$(find ommp_description)/urdf/macros/inertia_macros.urdf.xacro" />
+
+  <!-- Include costum Arm -->
+  <xacro:include filename="$(find ommp_description)/urdf/arms/generic_arm/generic_arm.urdf.xacro" />
+  
+  <!-- Include costum Gripper -->
+  <xacro:include filename="$(find ommp_description)/urdf/grippers/generic_gripper/generic_gripper.urdf.xacro" />
+
+
+
+
+  <!-- All the bases of the robot -->
+  <xacro:ommp_bases />
+  
+  <!-- Instanciate the 4 wheels of the robot -->
+  <xacro:costum_wheel prefix="front_left" parent="chassis" gz="false">
+    <origin xyz="${wheel_offset_x} ${wheel_offset_y} ${wheel_offset_z}" rpy="0 0 0"/>
+  </xacro:costum_wheel>
+
+  <xacro:costum_wheel prefix="front_right" parent="chassis" gz="false">
+    <origin xyz="${wheel_offset_x} -${wheel_offset_y} ${wheel_offset_z}" rpy="0 0 0"/>
+  </xacro:costum_wheel>
+
+  <xacro:costum_wheel prefix="back_left" parent="chassis" gz="false">
+    <origin xyz="-${wheel_offset_x} ${wheel_offset_y} ${wheel_offset_z}" rpy="0 0 0"/>
+  </xacro:costum_wheel>
+
+  <xacro:costum_wheel prefix="back_right" parent="chassis" gz="false">
+    <origin xyz="-${wheel_offset_x} -${wheel_offset_y} ${wheel_offset_z}" rpy="0 0 0"/>
+  </xacro:costum_wheel>
+
+  <!-- Instanciate the sensor macros -->
+  <!--(The gazebo plugin macros are instanciated on their corresponding xacro files) -->
+
+  <xacro:sensor_kinect parent="${kinect_parent}" />
+  
+  <xacro:sensor_laser parent="chassis" />
+
+  <xacro:imu_sensor parent="chassis" />
+  
+  <!-- Instanciate the Generic Arm macros -->
+  
+  <!-- connect arm -->
+  <xacro:generic_arm 
+    prefix="" 
+    parent="${generic_arm_parent}" 
+    transmission_hw_interface="${transmission_hw_interface}" 
+    safety_limits="${safety_limits}"
+    safety_pos_margin="${safety_pos_margin}"
+    safety_k_position="${safety_k_position}"/>
+
+  <!-- connect gripper-->
+  <xacro:generic_gripper 
+    prefix="" 
+    parent="${generic_gripper_parent}" 
+    transmission_hw_interface="${transmission_hw_interface}" 
+    safety_limits="${safety_limits}"
+    safety_pos_margin="${safety_pos_margin}"
+    safety_k_position="${safety_k_position}"/>
+
+
+</robot>
+

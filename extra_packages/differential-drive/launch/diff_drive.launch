@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<launch>
+    <node name="teleop" pkg="ommp_bringup" type="teleop" output="screen">
+     <!--remap from="teleop/cmd_vel" to="/diff_velocity_controller/cmd_vel"/-->
+     <remap from="teleop/cmd_vel" to="/cmd_vel"/>
+    </node>
+    <node name="Twist_to_Motors" pkg="differential_drive" type="twist_to_motors.py" respawn="false" 
+  output="screen">
+        <param name="base_width" value="0.25" />
+        <param name="rate" value="50" />
+        <param name="timeout_ticks" value="2" />
+        <!--remap from="rgb/image" to="/camera/rgb/image_raw"/-->
+    </node>
+    <node name="PID_FL" pkg="differential_drive" type="pid_velocity.py" respawn="false" 
+  output="screen">
+        <param name="rate" value="30" />
+        <remap from="wheel" to="/wheel_fl_enc"/>
+        <remap from="wheel_vtarget" to="/lwheel_vtarget"/>
+        <remap from="motor_cmd" to="/wheel_fl_cmd"/>
+        <remap from="wheel_vel" to="/wheel_fl_vel"/>
+    </node>
+    <node name="PID_FR" pkg="differential_drive" type="pid_velocity.py" respawn="false" 
+  output="screen">
+        <param name="rate" value="30" />
+        <remap from="wheel" to="/wheel_fr_enc"/>
+        <remap from="wheel_vtarget" to="/rwheel_vtarget"/>
+        <remap from="motor_cmd" to="/wheel_fr_cmd"/>
+        <remap from="wheel_vel" to="/wheel_fr_vel"/>
+    </node>
+    <node name="PID_BL" pkg="differential_drive" type="pid_velocity.py" respawn="false" 
+  output="screen">
+        <param name="rate" value="30" />
+        <remap from="wheel" to="/wheel_bl_enc"/>
+        <remap from="wheel_vtarget" to="/lwheel_vtarget"/>
+        <remap from="motor_cmd" to="/wheel_bl_cmd"/>
+        <remap from="wheel_vel" to="/wheel_bl_vel"/>
+    </node>
+    <node name="PID_BR" pkg="differential_drive" type="pid_velocity.py" respawn="false" 
+  output="screen">
+        <param name="rate" value="30" />
+        <remap from="wheel" to="/wheel_br_enc"/>
+        <remap from="wheel_vtarget" to="/rwheel_vtarget"/>
+        <remap from="motor_cmd" to="/wheel_br_cmd"/>
+        <remap from="wheel_vel" to="/wheel_br_vel"/>
+    </node>
+  <node name="serial_node" pkg="rosserial_python" type="serial_node.py" output="screen">
+      <param name="port" value="/dev/ttyACM0" />
+      <param name="baud" value="115200" />
+  </node>
+
+</launch>

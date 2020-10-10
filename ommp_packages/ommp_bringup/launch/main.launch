@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<launch>
+  <!-- robot parameters -->
+  <arg name="sim" default="true"/>
+  <arg name="robot" default="ommp_sim"/>
+  
+  <!--Gazebo parameters-->
+  <arg name="world" default="jackal_race"/> <!--empty, rtabmap, navigation, object_recognition1-->
+  <arg name="paused" default="false"/>
+  <arg name="use_sim_time" default="true"/>
+  <arg name="gui" default="true"/>
+  <arg name="headless" default="false"/>
+  <arg name="debug" default="false"/>
+
+  <include file="$(find ommp_bringup)/launch/sim_bringup.launch">
+    <!-- robot parameters -->
+    <arg name="robot" value="$(arg robot)"/>
+    <arg name="sim" value="$(arg sim)"/>
+    <!--Gazebo parameters-->
+    <arg name="world" value="$(arg world)"/>
+    <arg name="paused" value="$(arg paused)"/>
+    <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+    <arg name="gui" value="$(arg gui)"/>
+    <arg name="headless" value="$(arg headless)"/>
+    <arg name="debug" value="$(arg debug)"/>
+
+  </include>
+
+  <!--Moveit with start pos-->
+  <include file="$(find ommp_moveit_interface)/launch/moveit.launch">
+    <arg name="sim" value="true" />
+  </include>
+  <node name="Set_Start_Arm_Pos" pkg="ommp_moveit_interface" type="set_start_pos.py" respawn="false" output="screen"/>
+
+
+</launch>

@@ -1,0 +1,13 @@
+float64 x
+float64 y
+float64 th
+bool keep_ori
+bool enable_random
+float64 rand_x
+float64 rand_y
+---
+string done
+---
+float64 x
+float64 y
+float64 th

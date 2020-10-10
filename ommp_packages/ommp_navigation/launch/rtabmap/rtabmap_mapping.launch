@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<launch>
+  <group ns="rtabmap">
+
+    <!--node pkg="nodelet" type="nodelet" name="odom_sync" args="standalone rtabmap_ros/data_odom_sync" output="screen">
+      <remap from="rgb/image_in" to="/camera/rgb/image_rect_color"/>
+      <remap from="depth/image_in" to="/camera/depth_registered/image_raw"/>
+      <remap from="rgb/camera_info_in" to="/camera/rgb/camera_info"/>
+      <remap from="odom_in" to="/odom"/>
+    </node-->
+
+      <!-- Use RGBD synchronization -->
+
+    <node pkg="nodelet" type="nodelet" name="rgbd_sync" args="standalone rtabmap_ros/rgbd_sync" output="screen">
+
+      <remap from="rgb/image" to="/my_camera/rgb/image_raw"/>
+      <remap from="depth/image" to="/my_camera/depth_registered/image_raw"/>
+      <remap from="rgb/camera_info" to="/my_camera/rgb/camera_info"/>
+      <remap from="rgbd_image" to="rgbd_image"/>
+
+      <param name="approx_sync" value="true"/>
+
+     </node>
+
+
+
+     <node name="rtabmap" pkg="rtabmap_ros" type="rtabmap" output="screen" args="--delete_db_on_start">
+
+       <remap from="odom" to="/odometry/filtered"/>
+       <remap from="scan" to="/scan"/>
+       <remap from="rgbd_image" to="rgbd_image"/>
+
+       <remap from="/rtabmap/grid_map" to="/map"/>
+
+       <param name="frame_id" type="string" value="robot_footprint"/>
+       <param name="subscribe_depth" type="bool" value="false"/>
+       <param name="subscribe_rgbd" type="bool" value="true"/>
+       <param name="subscribe_scan" type="bool" value="true"/>
+       <param name="wait_for_trasnform" type="bool" value="true"/>
+       <param name="queue_size" type="int" value="10"/>
+       <param name="Reg/Force3DoF" type="string" value="true"/>
+       <!-- RTAB-Map's parameters -->
+       <param name="RGBD/NeighborLinkRefining" type="string" value="true"/>
+       <param name="RGBD/ProximityBySpace" type="string" value="true"/>
+       <param name="RGBD/AngularUpdate" type="string" value="0.1"/>
+       <param name="RGBD/LinearUpdate" type="string" value="0.1"/>
+       <param name="RGBD/OptimizeFromGraphEnd" type="string" value="false"/>
+       <param name="Grid/FromDepth" type="string" value="false"/>
+       <!-- occupancy grid from lidar -->
+       <param name="Reg/Strategy" type="string" value="1"/>
+       <!-- 1=ICP --><!-- ICP parameters -->
+       <param name="Icp/VoxelSize" type="string" value="0.03"/>
+       <param name="Icp/MaxCorrespondenceDistance" type="string" value="0.12"/>
+     </node>
+   </group>
+</launch>

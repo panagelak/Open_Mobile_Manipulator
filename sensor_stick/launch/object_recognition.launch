@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+
+<launch>
+
+  <!-- cloud transformer-->
+  <node name="cloud_transformer" pkg="sensor_stick" type="cloud_transformer_mine" respawn="false"/>
+  <!-- The feature extractor node -->
+  <node name="feature_extractor" pkg="sensor_stick" type="feature_extractor_mine" respawn="false"/>
+  <!-- The object recofnition node -->
+  <node name="object_recognition" pkg="sensor_stick" type="object_recognition_mine.py" respawn="false"/>
+</launch>

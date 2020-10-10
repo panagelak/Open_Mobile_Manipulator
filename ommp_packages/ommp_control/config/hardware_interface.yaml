@@ -1,0 +1,24 @@
+generic_hw_control_loop:
+  loop_hz: 50
+  cycle_time_error_threshold: 0.03
+
+# Settings for ros_control hardware interface
+hardware_interface:
+  joints:
+    - back_left_wheel_joint
+    - back_right_wheel_joint
+    - camera_dummy_joint #camera_rgb_joint for simulated robot
+    - elbow_joint
+    - finger1_joint
+    - finger2_joint
+    - front_left_wheel_joint
+    - front_right_wheel_joint
+    - shoulder_lift_joint
+    - shoulder_pan_joint
+    - wrist_1_joint
+    - wrist_2_joint
+    - wrist_3_joint
+
+
+  sim_control_mode: 0 # 0: position, 1: velocity
+  dummy: false

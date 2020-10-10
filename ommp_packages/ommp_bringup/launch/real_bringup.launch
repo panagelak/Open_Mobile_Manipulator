@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<launch>
+
+  <!-- robot parameters -->
+  <arg name="sim" default="false"/>
+  <arg name="robot" default="ommp_real"/>  <!--ommp_real robot we have moveit_config for ommp_real in extra packages-->
+
+  <!-- Load the Robot description -->
+  <include file="$(find ommp_description)/launch/description.launch">
+    <arg name="robot" value="$(arg robot)" />
+    <arg name="sim" value="$(arg sim)" />
+  </include>
+
+
+  <!--Load Hardware Interface Configuration to param server -->
+  <rosparam file="$(find ommp_control)/config/hardware_interface_pseudo_real.yaml" command="load"/>
+  <!-- start hardware interface node for the ommp -->
+  <node name="ommp_hardware_interface" pkg="ommp_hardware_interface" type="ommp_hw_main"
+          output="screen" launch-prefix=""/>
+
+  <!-- load controllers to param server-->
+  <rosparam file="$(find ommp_control)/config/joint_state_controller.yaml" command="load"/>
+  <rosparam file="$(find ommp_control)/config/arm_control.yaml" command="load"/>
+  <rosparam file="$(find ommp_control)/config/gripper_position_control.yaml" command="load"/>
+  <rosparam file="$(find ommp_control)/config/kinect_control_real.yaml" command="load"/>
+  <rosparam file="$(find ommp_control)/config/diff_control_with_tf.yaml" command="load"/>
+
+  <!-- launch the controller manager for ros control -->
+  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+    output="screen" args="joint_state_controller ommp_velocity_controller arm_controller gripper_controller kinect_controller"/>
+
+  <!-- load other controllers for manual guidance - we need to switch between them through a service call -->
+  <node name="controller_manager_group" pkg="controller_manager" type="controller_manager" respawn="false" output="screen" args="load joint_group_position_controller" />
+
+  <!-- Moveit with start pos script-->
+  <include file="$(find ommp_moveit_interface)/launch/moveit.launch">
+    <arg name="real" value="true" />
+  </include>
+  <node name="set_start_arm_pos" pkg="ommp_moveit_interface" type="set_start_pos.py" respawn="false" 
+  output="screen"/>
+
+  <!-- Include Sim Helpers -->
+  <include file="$(find ommp_bringup)/launch/sim_helpers.launch"/>
+
+  <!-- Start the LIDAR driver -->
+  <!--node name="ydlidar_node"  pkg="ydlidar"  type="ydlidar_node" output="screen" respawn="false" >
+    <rosparam file="$(find ommp_bringup)/config/real_start/ydlidar_params.yaml" command="load" />
+  </node-->
+
+  <!-- Transforms Joint_states to appropiate servo commmands for rosserial -->
+  <!-- Arm is a clone of joint_States - perfect execution -->
+  <!--node name="Pub_to_Arduino_Class" pkg="ommp_bringup" type="Pub_to_Arduino_Class" respawn="false" 
+  output="screen"/-->
+  
+  <!-- Load the PCA9685 Driver -->
+  <!--node name="PCA9685_driver" pkg="pwm_pca9685" type="pca9685_node" respawn="false" 
+  output="screen"/-->
+
+  <!--!!!!!!!!Not used with Ommp Velocity Controller-->
+  <!-- Transforms cmd_vel to appropiate wheel velocity target for rosserial-pid -->
+  <!--node name="Cmd_Vel_to_Arduino" pkg="ommp_bringup" type="Cmd_Vel_to_Arduino" respawn="false" 
+  output="screen"/-->
+
+  <!--!!!!!!!!Not used with Ommp Velocity Controller-->
+  <!-- From encoders array values calculate odometry -->
+  <!--node pkg="ommp_bringup" type="Diff_TF" name="Diff_TF" output="screen">
+    <rosparam file="$(find ommp_bringup)/config/real_start_examples/odom_encoder_params.yaml" command="load" />
+  </node-->
+  
+  <!-- Start rosserial Arduino node -->
+  <!--node name="serial_node" pkg="rosserial_python" type="serial_node.py" output="screen">
+      <rosparam file="$(find ommp_bringup)/config/start/serial_params.yaml" command="load" />
+  </node-->
+
+  <!-- camera relay-->
+  <!--node name="Camera_Relay" pkg="ommp_bringup" type="Camera_Relay" respawn="false" 
+  output="screen"/-->
+
+  <!-- Kinect motors pitch -->
+  <!--node name="Kinect_AUX" pkg="kinect_aux" type="kinect_aux_node" respawn="false" 
+  output="screen"/-->
+
+
+
+
+  <!-- Comment : to start Kinect driver I use docker run the following command-->
+  <!--docker start kinect && docker exec kinect /bin/bash -->
+
+
+  <!-- Optional laser odometry publish tf? -->
+  <!--node pkg="rf2o_laser_odometry" type="rf2o_laser_odometry_node" name="rf2o_laser_odometry" output="screen">
+    <rosparam file="$(find ommp_bringup)/config/rf2o_laser_odometry_params.yaml" command="load" />
+  </node-->
+
+  <!-- Optional EKF Sensor Fusion -->
+  <!--node pkg="robot_localization" type="ekf_localization_node" name="ekf_localization">
+    <rosparam file="$(find ommp_control)/config/ekf_localization.yaml" command="load" />
+    <remap from="odometry/filtered" to="odometry/filtered"/>
+  </node-->
+
+
+
+</launch>

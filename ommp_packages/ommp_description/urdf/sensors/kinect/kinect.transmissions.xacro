@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+
+
+
+
+
+    <transmission name="kinect_mount_tranms">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="camera_rgb_joint">
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="kinect_mount_act">
+        <mechanicalReduction>1</mechanicalReduction>
+  <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+      </actuator>
+    </transmission>
+
+
+</robot>

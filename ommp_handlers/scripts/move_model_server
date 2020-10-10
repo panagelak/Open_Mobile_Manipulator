@@ -1,0 +1,172 @@
+#!/usr/bin/env python
+import rospy
+import actionlib
+from nav_msgs.msg import Odometry
+from gazebo_msgs.msg import ModelState
+from tf.transformations import euler_from_quaternion, quaternion_from_euler
+import math
+import random
+from integration.msg import MoveModelAction, MoveModelGoal, MoveModelResult, MoveModelFeedback
+
+
+class ModelMoveAction(object):
+    def __init__(self):
+        self._as = actionlib.SimpleActionServer(
+            "model_move_handler_server/action", MoveModelAction, execute_cb=self.execute_cb, auto_start=False)
+        self.initial_orientation = None 
+        self.initial_position = None
+        self.cur_position = None
+        self.cur_orientation = None
+        self._turn = False
+        self._fturn = False
+        self._dist = False
+        self._goal_angle = None
+        self._feedback = MoveModelFeedback()
+        self._result = MoveModelResult()
+        self.sub = rospy.Subscriber(
+            "/george/odom", Odometry, self.odom_callback)
+        self.pub = rospy.Publisher(
+            "gazebo/set_model_state", ModelState, queue_size=10)
+        self._as.start()
+
+    def execute_cb(self, goal):
+        r = rospy.Rate(50)
+
+        pose_msg = ModelState()
+        pose_msg.model_name = 'george'
+        goal_x = goal.x
+        goal_y = goal.y
+        goal_th = goal.th
+        if goal.enable_random:
+            goal_x += random.uniform(-goal.rand_x, goal.rand_x)
+            goal_y += random.uniform(-goal.rand_y, goal.rand_y)
+
+        if not self.initial_orientation:
+            pose_msg.pose.position = self.cur_position
+            pose_msg.pose.orientation = self.cur_orientation
+
+            self.initial_orientation = self.cur_orientation
+            self.initial_position = self.cur_position
+            self._turn = True
+
+            inc_x = goal_x - self.initial_position.x
+            inc_y = goal_y - self.initial_position.y
+            self._goal_angle = math.pi/2 + math.atan2(inc_y, inc_x)
+
+        if (not goal.keep_ori):
+
+            while (self.initial_orientation and self._turn):
+
+                cur_angle = euler_from_quaternion(
+                    (self.cur_orientation.x, self.cur_orientation.y, self.cur_orientation.z, self.cur_orientation.w))
+                self._feedback.x = self.cur_position.x
+                self._feedback.y = self.cur_position.y
+                self._feedback.th = cur_angle[2]
+                self._as.publish_feedback(self._feedback)
+
+                # Fix Errors in Orientation
+                q = quaternion_from_euler(0, 0, self._goal_angle)
+                pose_msg.pose.orientation.x = q[0]
+                pose_msg.pose.orientation.y = q[1]
+                pose_msg.pose.orientation.z = q[2]
+                pose_msg.pose.orientation.w = q[3]
+                self.pub.publish(pose_msg)
+                # reset some variables if done turning
+                self._turn = False
+                self.initial_orientation = None
+                self._dist = True
+                rospy.loginfo("Turn succesfully completed!")
+
+                r.sleep()
+
+            while (self._dist):
+
+                self._feedback.x = self.cur_position.x
+                self._feedback.y = self.cur_position.y
+                self._feedback.th = cur_angle[2]
+                self._as.publish_feedback(self._feedback)
+
+                if abs(goal_x - self.cur_position.x) >= 0.03 or abs(goal_y - self.cur_position.y) >= 0.03:
+
+                    pose_msg.pose.position.x += 0.02 * \
+                        math.sin(self._goal_angle)
+                    pose_msg.pose.position.y -= 0.02 * \
+                        math.cos(self._goal_angle)
+
+                    self.pub.publish(pose_msg)
+                else:
+                    # Fix Errors in Position
+                    pose_msg.pose.position.x = goal_x
+                    pose_msg.pose.position.y = goal_y
+                    self.pub.publish(pose_msg)
+                    self._fturn = True
+                    break
+                r.sleep()
+
+            while (self._fturn):
+
+                cur_angle = euler_from_quaternion(
+                    (self.cur_orientation.x, self.cur_orientation.y, self.cur_orientation.z, self.cur_orientation.w))
+                self._feedback.x = self.cur_position.x
+                self._feedback.y = self.cur_position.y
+                self._feedback.th = cur_angle[2]
+                self._as.publish_feedback(self._feedback)
+
+                # Fix Errors if done turning
+                q = quaternion_from_euler(0, 0, goal_th)
+                pose_msg.pose.orientation.x = q[0]
+                pose_msg.pose.orientation.y = q[1]
+                pose_msg.pose.orientation.z = q[2]
+                pose_msg.pose.orientation.w = q[3]
+                self.pub.publish(pose_msg)
+                # reset some variables if done turning
+                self._fturn = False
+                rospy.loginfo("Turn succesfully completed!")
+                self._result.done = "done"
+                self._as.set_succeeded(self._result)
+                r.sleep()
+        # We keep the Orientation Here e.g Move With Cart
+        else:
+            pose_msg.pose.position = self.cur_position
+            pose_msg.pose.orientation = self.cur_orientation
+
+            while (self.initial_orientation and self._turn):
+
+                cur_angle = euler_from_quaternion(
+                    (self.cur_orientation.x, self.cur_orientation.y, self.cur_orientation.z, self.cur_orientation.w))
+                self._feedback.x = self.cur_position.x
+                self._feedback.y = self.cur_position.y
+                self._feedback.th = cur_angle[2]
+                self._as.publish_feedback(self._feedback)
+
+                if abs(goal_x - self.cur_position.x) >= 0.03 or abs(goal_y - self.cur_position.y) >= 0.03:
+                    pose_msg.pose.position.x += 0.02 * \
+                        math.sin(self._goal_angle)
+                    pose_msg.pose.position.y -= 0.02 * \
+                        math.cos(self._goal_angle)
+
+                    self.pub.publish(pose_msg)
+
+                else:
+                    # Fix Errors in Position
+                    pose_msg.pose.position.x = goal_x
+                    pose_msg.pose.position.y = goal_y
+                    self.pub.publish(pose_msg)
+                    self.initial_orientation = None
+                    self._turn = False
+                    self._result.done = "done"
+                    self._as.set_succeeded(self._result)
+                    self._turn = True
+                    break
+                r.sleep()
+
+    def odom_callback(self, data):  # get the odometry data
+        self.cur_orientation = data.pose.pose.orientation
+        self.cur_position = data.pose.pose.position
+
+
+if __name__ == '__main__':
+    rospy.init_node('spin_node')
+    rospy.loginfo("Spin Action Server started ...")
+    server = ModelMoveAction()
+    rospy.spin()

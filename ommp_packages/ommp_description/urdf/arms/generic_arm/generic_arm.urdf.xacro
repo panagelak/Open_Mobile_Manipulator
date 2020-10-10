@@ -1,0 +1,339 @@
+<?xml version='1.0'?>
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Include Inertia Macros -->
+  <xacro:include filename="$(find ommp_description)/urdf/macros/inertia_macros.urdf.xacro" />
+
+  <!-- Include Transmissions -->
+  <xacro:include filename="$(find ommp_description)/urdf/arms/generic_arm/generic_arm.transmissions.xacro" />
+  
+  <!-- Instantiate Transmissions -->
+  <xacro:generic_arm_transmission prefix="${prefix}" hw_interface="${transmission_hw_interface}" />
+
+  <!-- If we use simulation include Gazebo Stuff -->
+  <xacro:if value="$(arg sim)">
+
+      <!-- Gazebo link properties -->
+      <xacro:include filename="$(find ommp_description)/urdf/arms/generic_arm/generic_arm.gazebo.xacro" />
+      <!-- Instantiate it -->
+      <xacro:generic_arm_gazebo prefix="${prefix}" />
+  
+  </xacro:if>
+
+    
+
+<!--Macro of the arm -->
+
+<xacro:macro name="generic_arm" params="prefix parent 
+  transmission_hw_interface:=hardware_interface/PositionJointInterface
+  safety_limits:=false safety_pos_margin:=0.15
+  safety_k_position:=20">
+
+  <link name="arm_footprint"/>
+
+  <joint name="arm_joint" type="fixed">
+    <parent link="${parent}"/>
+    <child link="arm_footprint"/>
+    <xacro:insert_block name="generic_arm_joint_origin" />
+  </joint>
+  
+
+  <link name="${prefix}arm_base" >
+    
+    <visual>
+      <xacro:insert_block name="arm_base_origin" />
+      <geometry>
+        <cylinder length = "${arm_base_length}" radius="${arm_base_radius}"/>
+      </geometry>
+      <material name="Blue">
+        <color rgba="0.0 0.0 1.0 1.0"/>
+      </material>
+    </visual>
+    
+    <collision>
+      <xacro:insert_block name="arm_base_origin" />
+      <geometry>
+        <cylinder length = "${arm_base_length * collision_factor}" radius="${arm_base_radius * collision_factor}"/>
+      </geometry>
+    </collision>
+    <xacro:if value="${use_dummy_inertial}">
+      <xacro:inertial_dummy>
+        <xacro:insert_block name="arm_base_origin" />
+      </xacro:inertial_dummy>
+    </xacro:if>
+    <xacro:unless value="${use_dummy_inertial}">
+      <xacro:cylinder_inertial length = "${arm_base_length}" radius="${arm_base_radius}" mass="${arm_base_mass}">
+        <xacro:insert_block name="arm_base_origin" />
+      </xacro:cylinder_inertial>
+    </xacro:unless>
+  </link>
+
+  <joint name="arm_footprint_joint" type="fixed">
+    <parent link="arm_footprint"/>
+    <child link="arm_base"/>
+    <xacro:insert_block name="arm_base_joint_origin" />
+  </joint>
+
+
+  <!-- SHOULDER -->
+
+  <link name="${prefix}shoulder_link" >
+    <visual>
+      <xacro:insert_block name="shoulder_origin" />
+      <geometry>
+        <cylinder length = "${shoulder_length}" radius="${shoulder_radius}"/>
+      </geometry>
+      <material name="Green">
+        <color rgba="0.0 1.0 0.0 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <xacro:insert_block name="shoulder_origin" />
+      <geometry>
+        <cylinder length = "${shoulder_length * collision_factor}" radius="${shoulder_radius * collision_factor}"/>
+      </geometry>
+    </collision>
+    <xacro:if value="${use_dummy_inertial}">
+      <xacro:inertial_dummy>
+        <xacro:insert_block name="shoulder_origin" />
+      </xacro:inertial_dummy>
+    </xacro:if>
+    <xacro:unless value="${use_dummy_inertial}">
+      <xacro:cylinder_inertial length = "${shoulder_length}" radius="${shoulder_radius}" mass="${shoulder_mass}">
+        <xacro:insert_block name="shoulder_origin" />
+      </xacro:cylinder_inertial>
+    </xacro:unless>
+  </link>
+
+  <joint name="${prefix}shoulder_pan_joint" type="revolute">
+    <parent link="${prefix}arm_base" />
+    <child link = "${prefix}shoulder_link" />
+    <xacro:insert_block name="shoulder_pan_joint_origin" />
+    <xacro:insert_block name="shoulder_pan_joint_axis" />
+    <limit lower="${shoulder_pan_lower_limit}" upper="${shoulder_pan_upper_limit}" effort="330.0" velocity="2.16"/>
+    <xacro:if value="${safety_limits}">
+      <safety_controller soft_lower_limit="${shoulder_pan_lower_limit + safety_pos_margin}" soft_upper_limit="${shoulder_pan_upper_limit - safety_pos_margin}" k_position="${safety_k_position}" k_velocity="0.0"/>
+    </xacro:if>
+    <dynamics damping="0.0" friction="0.0"/>
+  </joint>
+  
+  <!--UPPER ARM -->
+
+  <link name="${prefix}upper_arm_link" >
+    <visual>
+      <xacro:insert_block name="upper_arm_origin" />
+      <geometry>
+        <cylinder length = "${upper_arm_length}" radius="${upper_arm_radius}"/>
+      </geometry>
+      <material name="Red">
+        <color rgba="1.0 0.0 0.0 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <xacro:insert_block name="upper_arm_origin" />
+      <geometry>
+        <cylinder length = "${upper_arm_length * collision_factor}" radius="${upper_arm_radius * collision_factor}"/>
+      </geometry>
+    </collision>
+    <xacro:if value="${use_dummy_inertial}">
+      <xacro:inertial_dummy>
+        <xacro:insert_block name="upper_arm_origin" />
+      </xacro:inertial_dummy>
+    </xacro:if>
+    <xacro:unless value="${use_dummy_inertial}">
+      <xacro:cylinder_inertial length = "${upper_arm_length}" radius="${upper_arm_radius}" mass="${upper_arm_mass}">
+        <xacro:insert_block name="upper_arm_origin" />
+      </xacro:cylinder_inertial>
+    </xacro:unless>
+  </link>
+
+  <joint name="${prefix}shoulder_lift_joint" type="revolute">
+    <parent link="${prefix}shoulder_link" />
+    <child link = "${prefix}upper_arm_link" />
+    <xacro:insert_block name="shoulder_lift_joint_origin" />
+    <xacro:insert_block name="shoulder_lift_joint_axis" />
+    <limit lower="${shoulder_lift_lower_limit}" upper="${shoulder_lift_upper_limit}" effort="330.0" velocity="2.16"/>
+    <xacro:if value="${safety_limits}">
+      <safety_controller soft_lower_limit="${shoulder_lift_lower_limit + safety_pos_margin}" soft_upper_limit="${shoulder_lift_upper_limit - safety_pos_margin}" k_position="${safety_k_position}" k_velocity="0.0"/>
+    </xacro:if>
+    <dynamics damping="0.0" friction="0.0"/>
+  </joint>
+
+  <!--FOREARM -->
+
+  <link name="${prefix}forearm_link" >
+    <visual>
+      <xacro:insert_block name="forearm_origin" />
+      <geometry>
+        <cylinder length = "${forearm_length}" radius="${forearm_radius}"/>
+      </geometry>
+      <material name="Green">
+        <color rgba="0.0 1.0 0.0 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <xacro:insert_block name="forearm_origin" />
+      <geometry>
+        <cylinder length = "${forearm_length * collision_factor}" radius="${forearm_radius * collision_factor}"/>
+      </geometry>
+    </collision>
+    <xacro:if value="${use_dummy_inertial}">
+      <xacro:inertial_dummy>
+        <xacro:insert_block name="forearm_origin" />
+      </xacro:inertial_dummy>
+    </xacro:if>
+    <xacro:unless value="${use_dummy_inertial}">
+      <xacro:cylinder_inertial length = "${forearm_length}" radius="${forearm_radius}" mass="${forearm_mass}">
+        <xacro:insert_block name="forearm_origin" />
+      </xacro:cylinder_inertial>
+    </xacro:unless>
+  </link>
+
+  <joint name="${prefix}elbow_joint" type="revolute">
+    <parent link="${prefix}upper_arm_link" />
+    <child link = "${prefix}forearm_link" />
+    <xacro:insert_block name="elbow_joint_origin" />
+    <xacro:insert_block name="elbow_joint_axis" />
+    <limit lower="${elbow_lower_limit}" upper="${elbow_upper_limit}" effort="330.0" velocity="2.16"/>
+    <xacro:if value="${safety_limits}">
+      <safety_controller soft_lower_limit="${elbow_lower_limit + safety_pos_margin}" soft_upper_limit="${elbow_upper_limit - safety_pos_margin}" k_position="${safety_k_position}" k_velocity="0.0"/>
+    </xacro:if>
+    <dynamics damping="0.0" friction="0.0"/>
+  </joint>
+
+
+ <!-- Wrist 1 link -->
+
+  <link name="${prefix}wrist_1_link" >
+    <visual>
+      <xacro:insert_block name="wrist_1_origin" />
+      <geometry>
+        <cylinder length = "${wrist_1_length}" radius="${wrist_1_radius}"/>
+      </geometry>
+      <material name="Red">
+        <color rgba="1.0 0.0 0.0 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <xacro:insert_block name="wrist_1_origin" />
+      <geometry>
+        <cylinder length = "${wrist_1_length * collision_factor}" radius="${wrist_1_radius * collision_factor}"/>
+      </geometry>
+    </collision>
+    <xacro:if value="${use_dummy_inertial}">
+      <xacro:inertial_dummy>
+        <xacro:insert_block name="wrist_1_origin" />
+      </xacro:inertial_dummy>
+    </xacro:if>
+    <xacro:unless value="${use_dummy_inertial}">
+      <xacro:cylinder_inertial length = "${wrist_1_length}" radius="${wrist_1_radius}" mass="${wrist_1_mass}">
+        <xacro:insert_block name="wrist_1_origin" />
+      </xacro:cylinder_inertial>
+    </xacro:unless>
+  </link>
+
+  <joint name="${prefix}wrist_1_joint" type="revolute">
+    <parent link="${prefix}forearm_link" />
+    <child link = "${prefix}wrist_1_link" />
+    <xacro:insert_block name="wrist_1_joint_origin" />
+    <xacro:insert_block name="wrist_1_joint_axis" />
+    <limit lower="${wrist_1_lower_limit}" upper="${wrist_1_upper_limit}" effort="330.0" velocity="2.16"/>
+    <xacro:if value="${safety_limits}">
+      <safety_controller soft_lower_limit="${wrist_1_lower_limit + safety_pos_margin}" soft_upper_limit="${wrist_1_upper_limit - safety_pos_margin}" k_position="${safety_k_position}" k_velocity="0.0"/>
+    </xacro:if>
+    <dynamics damping="0.0" friction="0.0"/>
+  </joint>
+
+ <!-- Wrist 2 link -->
+
+  <link name="${prefix}wrist_2_link" >
+    <visual>
+      <xacro:insert_block name="wrist_2_origin" />
+      <geometry>
+        <cylinder length = "${wrist_2_length}" radius="${wrist_2_radius}"/>
+      </geometry>
+      <material name="Blue">
+        <color rgba="0.0 0.0 1.0 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <xacro:insert_block name="wrist_2_origin" />
+      <geometry>
+        <cylinder length = "${wrist_2_length * collision_factor}" radius="${wrist_2_radius * collision_factor}"/>
+      </geometry>
+    </collision>
+    <xacro:if value="${use_dummy_inertial}">
+      <xacro:inertial_dummy>
+        <xacro:insert_block name="wrist_2_origin" />
+      </xacro:inertial_dummy>
+    </xacro:if>
+    <xacro:unless value="${use_dummy_inertial}">
+      <xacro:cylinder_inertial length = "${wrist_2_length}" radius="${wrist_2_radius}" mass="${wrist_2_mass}">
+        <xacro:insert_block name="wrist_2_origin" />
+      </xacro:cylinder_inertial>
+    </xacro:unless>
+  </link>
+
+  <joint name="${prefix}wrist_2_joint" type="revolute">
+    <parent link="${prefix}wrist_1_link" />
+    <child link = "${prefix}wrist_2_link" />
+    <xacro:insert_block name="wrist_2_joint_origin" />
+    <xacro:insert_block name="wrist_2_joint_axis" />
+    <limit lower="${wrist_2_lower_limit}" upper="${wrist_2_upper_limit}" effort="330.0" velocity="2.16"/>
+    <xacro:if value="${safety_limits}">
+      <safety_controller soft_lower_limit="${wrist_2_lower_limit + safety_pos_margin}" soft_upper_limit="${wrist_2_upper_limit - safety_pos_margin}" k_position="${safety_k_position}" k_velocity="0.0"/>
+    </xacro:if>
+    <dynamics damping="0.0" friction="0.0"/>
+  </joint>
+
+ <!-- Wrist 3 link -->
+
+  <link name="${prefix}wrist_3_link" >
+    <visual>
+      <xacro:insert_block name="wrist_3_origin" />
+      <geometry>
+        <cylinder length = "${wrist_3_length}" radius="${wrist_3_radius}"/>
+      </geometry>
+      <material name="Black">
+        <color rgba="0.0 0.0 0.0 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <xacro:insert_block name="wrist_3_origin" />
+      <geometry>
+        <cylinder length = "${wrist_3_length * collision_factor}" radius="${wrist_3_radius * collision_factor}"/>
+      </geometry>
+    </collision>
+    <xacro:if value="${use_dummy_inertial}">
+      <xacro:inertial_dummy>
+        <xacro:insert_block name="wrist_3_origin" />
+      </xacro:inertial_dummy>
+    </xacro:if>
+    <xacro:unless value="${use_dummy_inertial}">
+      <xacro:cylinder_inertial length = "${wrist_3_length}" radius="${wrist_3_radius}" mass="${wrist_3_mass}">
+        <xacro:insert_block name="wrist_3_origin" />
+      </xacro:cylinder_inertial>
+    </xacro:unless>
+  </link>
+
+  <joint name="${prefix}wrist_3_joint" type="revolute">
+    <parent link="${prefix}wrist_2_link" />
+    <child link = "${prefix}wrist_3_link" />
+    <xacro:insert_block name="wrist_3_joint_origin" />
+    <xacro:insert_block name="wrist_3_joint_axis" />
+    <limit lower="${wrist_2_lower_limit}" upper="${wrist_2_upper_limit}" effort="330.0" velocity="2.16"/>
+    <xacro:if value="${safety_limits}">
+      <safety_controller soft_lower_limit="${wrist_2_lower_limit + safety_pos_margin}" soft_upper_limit="${wrist_2_upper_limit - safety_pos_margin}" k_position="${safety_k_position}" k_velocity="0.0"/>
+    </xacro:if>
+    <dynamics damping="0.0" friction="0.0"/>
+  </joint>
+
+
+</xacro:macro>
+
+
+
+
+</robot>
+

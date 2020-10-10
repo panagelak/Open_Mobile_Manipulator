@@ -1,0 +1,6 @@
+bool spawn_human
+bool delete_human
+bool random
+string product_id
+---
+bool success

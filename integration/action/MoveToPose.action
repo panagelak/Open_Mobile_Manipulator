@@ -1,0 +1,18 @@
+##Description: Moves robot arm to a specified sequence of poses.
+
+#goal definition
+int32 constraint_mode
+
+#geometry_msgs/PoseStamped is used to define the reference frame in the frameid.
+geometry_msgs/PoseStamped target_pose
+
+float32 velocity
+float32 acceleration
+float32 timeout
+integration/ActionRequest action_request
+---
+#result definition
+integration/ActionResult action_result
+---
+#feedback
+integration/ActionFeedback action_feedback

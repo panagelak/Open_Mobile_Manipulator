@@ -1,0 +1,11 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: ommp_description
+    relative_path: urdf/robots/ommp_real/ommp_real.urdf.xacro
+    xacro_args: ""
+  SRDF:
+    relative_path: config/ommp_real.srdf
+  CONFIG:
+    author_name: Panagiotis
+    author_email: panagiotis.angelakis.robot@gmail.com
+    generated_timestamp: 1594206734

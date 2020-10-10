@@ -1,0 +1,4 @@
+kinect_controller:
+  type: position_controllers/JointPositionController
+  joint: camera_rgb_joint
+

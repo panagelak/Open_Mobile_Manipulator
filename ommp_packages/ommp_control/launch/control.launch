@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+
+  <!-- load controllers to param server-->
+  <rosparam file="$(find ommp_control)/config/joint_state_controller.yaml" command="load"/>
+  <rosparam file="$(find ommp_control)/config/arm_control.yaml" command="load"/>
+  <rosparam file="$(find ommp_control)/config/gripper_position_control.yaml" command="load"/>
+  <rosparam file="$(find ommp_control)/config/kinect_control_sim.yaml" command="load"/>
+  <!--rosparam file="$(find ommp_control)/config/hardware_interface_settings.yaml" command="load"/-->
+  <rosparam file="$(find ommp_control)/config/diff_control.yaml" command="load"/>
+
+  <!-- launch the controller manager for ros control -->
+  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+    output="screen" args="joint_state_controller  ommp_velocity_controller arm_controller gripper_controller kinect_controller"/>
+  
+  <!-- robot localization sensor fusion wheel encoders + imu -->
+  <node pkg="robot_localization" type="ekf_localization_node" name="ekf_localization">
+    <rosparam file="$(find ommp_control)/config/robot_localization.yaml" command="load" />
+    <!--remap from="odometry/filtered" to="odom_combined"/-->
+  </node>
+
+
+</launch>

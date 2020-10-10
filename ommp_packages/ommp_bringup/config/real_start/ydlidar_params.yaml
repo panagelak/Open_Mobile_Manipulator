@@ -1,0 +1,14 @@
+port: /dev/ydlidar 
+baudrate: 115200
+frame_id: laser_frame
+low_exposure: false
+resolution_fixed: true
+auto_reconnect: true
+reversion: false
+angle_min: -180
+angle_max: 180
+range_min: 0.15
+range_max: 10.0
+ignore_array: "" 
+samp_rate: 9
+frequency: 6

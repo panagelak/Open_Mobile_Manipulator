@@ -1,0 +1,4 @@
+base_width: 0.45
+ticks_meter: 33000
+publish_tf: 1
+odom_frame_id: odom  #_encoder

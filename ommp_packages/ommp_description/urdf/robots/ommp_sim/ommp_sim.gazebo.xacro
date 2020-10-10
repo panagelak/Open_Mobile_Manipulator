@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- ros_control plugin -->
+  <gazebo>
+    <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+      <!--legacyModeNS>true</legacyModeNS-->
+      <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
+    </plugin>
+  </gazebo>
+
+
+  <!--gazebo>
+    <plugin name="skid_steer_drive_controller" filename="libgazebo_ros_skid_steer_drive.so">
+      <updateRate>100.0</updateRate>
+      <robotNamespace>/</robotNamespace>
+      <leftFrontJoint>front_left_wheel_joint</leftFrontJoint>
+      <rightFrontJoint>front_right_wheel_joint</rightFrontJoint>
+      <leftRearJoint>back_left_wheel_joint</leftRearJoint>
+      <rightRearJoint>back_right_wheel_joint</rightRearJoint>
+      <wheelSeparation>0.28</wheelSeparation>
+      <wheelDiameter>0.11</wheelDiameter>
+      <robotBaseFrame>robot_footprint</robotBaseFrame>
+      <torque>3000</torque>
+      <topicName>cmd_vel</topicName>
+      <broadcastTF>true</broadcastTF>
+    </plugin>
+  </gazebo-->
+  
+  <!-- grasp plugin -->
+  <gazebo>
+    <plugin name="gazebo_grasp_fix" filename="libgazebo_grasp_fix.so">
+      <arm>
+        <arm_name>arm</arm_name>
+        <palm_link>finger1</palm_link>
+        <gripper_link>finger1</gripper_link>
+        <gripper_link>finger2</gripper_link>
+      </arm>
+      <forces_angle_tolerance>50</forces_angle_tolerance>
+      <update_rate>8</update_rate>
+      <grip_count_threshold>8</grip_count_threshold>
+      <max_grip_count>8</max_grip_count>
+      <release_tolerance>0.01</release_tolerance>
+      <disable_collisions_on_attach>true</disable_collisions_on_attach>
+      <contact_topic>__default_topic__</contact_topic>
+    </plugin>
+  </gazebo>
+
+  <!--gazebo>
+    <plugin name="omni_steering" filename="libgazebo_ros_planar_move.so">
+      <commandTopic>diff_velocity_controller/cmd_vel</commandTopic>
+      <odometryTopic>diff_velocity_controller/odom</odometryTopic>
+      <odometryFrame>odom</odometryFrame>
+      <odometryRate>50.0</odometryRate>
+      <robotBaseFrame>robot_footprint</robotBaseFrame>
+      <publishTF>true</publishTF>
+    </plugin>
+  </gazebo-->
+  
+</robot>
+

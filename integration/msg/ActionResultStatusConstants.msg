@@ -1,0 +1,7 @@
+#Constants
+string SUCCESS=Success
+string EMERGENCY_STOP=EmergencyStop
+string SAFETY_ZONE_VIOLATION=SafetyZoneViolation
+string OPERATIONAL_EXCEPTION=OperationalException
+string MALFUNCTION=Malfunction
+string CANCELLED=Cancelled

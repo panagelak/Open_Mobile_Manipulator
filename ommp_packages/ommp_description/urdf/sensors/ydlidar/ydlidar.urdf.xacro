@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="lynx_rover">
+
+
+  <xacro:if value="$(arg sim)">
+      <!-- Include Ydlidar Plugin -->
+      <xacro:include filename="$(find ommp_description)/urdf/sensors/ydlidar/ydlidar.gazebo.xacro" />
+
+      <xacro:laser_gazebo_sensor link_name="laser_link" laser_name="ydlidar"
+                         frame_name="laser_link"/>
+
+  </xacro:if>
+
+  <!-- ydlidar Link -->
+  <xacro:macro name="sensor_laser" params="parent">
+    <link name="laser_link">
+
+      <inertial>
+        <mass value="0.1"/>
+        <origin xyz="0 0 0.0" rpy="0 0 0"/>
+        <inertia
+            ixx="1e-6" ixy="0" ixz="0"
+            iyy="1e-6" iyz="0"
+            izz="1e-6"
+        />
+      </inertial>
+      <visual>
+        <geometry>
+          
+          <mesh filename="package://ommp_description/meshes/sensors/ydlidar/ydlidar.dae"/>
+        </geometry>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+      </visual>
+        <collision>
+          <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+          <geometry>
+            <box size="0.0 0.0 0.0"/>
+          </geometry>
+        </collision>
+    </link>
+
+    <joint type="fixed" name="ydlidar_joint">
+      <xacro:insert_block name="lidar_joint_origin" />
+      <child link="laser_link"/>
+      <parent link="${parent}"/>
+    </joint>
+  </xacro:macro>
+  
+</robot>

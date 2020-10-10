@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<launch>
+
+  <!--Seperate Joint States-->
+  <node name="seperate_joint_states" pkg="ommp_bringup" type="Seperate_Joint_States" respawn="false" output="screen"/>
+
+</launch>
+
+

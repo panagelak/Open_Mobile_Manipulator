@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<launch>
+
+  <node pkg="frontier_exploration" type="explore_client" name="explore_client" output="screen"/>
+  <node pkg="frontier_exploration" type="explore_server" name="explore_server" output="screen">
+    <param name="frequency" value="1.0"/> 
+
+    <!-- Should be less than sensor range -->
+    <param name="goal_aliasing" value="3.0"/>
+    <rosparam file="$(find ommp_navigation)/params/costmap_common_params.yaml" command="load" ns="explore_costmap" />
+    <rosparam file="$(find ommp_navigation)/params/exploration_params/costmap_exploration.yaml" command="load" ns="explore_costmap" />
+  </node> 
+
+</launch>

@@ -1,0 +1,107 @@
+<?xml version="1.0" ?>
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  
+  <!-- Include or Not Gazebo Files-->
+  <xacro:arg name="sim" default="true"/>
+  <xacro:property name="gz" default="true"/>
+  
+  <!-- PI Value -->
+  <xacro:property name="M_PI" value="3.141592653" />
+  <xacro:property name="PI" value="3.141592653" />
+  <!--prefix-->
+  <xacro:property name="prefix" value="" />
+
+  <!-- Include Arm Configuration-->
+  <xacro:include filename="$(find ommp_description)/urdf/robots/ommp_sim/arm_configuration.urdf.xacro" />
+
+  <!--chassis-->
+  <xacro:property name="base_size">
+    <box size = "0.25 0.2 0.06"/>
+  </xacro:property>
+
+  <!-- wheels-->
+
+  <xacro:property name="wheel_size">
+    <cylinder length = "0.065" radius="0.055"/>
+  </xacro:property>
+
+  <xacro:property name="wheel_offset_x" value="0.0975" /><!--0.0975-->
+  <xacro:property name="wheel_offset_y" value="0.14" /><!--0.14 -->
+  <xacro:property name="wheel_offset_z" value="-0.015" />
+
+
+  <!--Robot bases-->
+
+  <xacro:property name="upper_base_size">
+    <box size = "0.3 0.15 0.02"/>
+  </xacro:property>
+
+  <xacro:property name="upper_base_joint_origin">
+    <origin xyz="0.05 0.0 0.0875" rpy="0 0 0" />
+  </xacro:property>
+
+  <xacro:property name="kinect_base1_size">
+    <box size = "0.01 0.03 0.38"/>
+  </xacro:property>
+
+  <xacro:property name="kinect_base2_size">
+    <box size = "0.07 0.07 0.02"/>
+  </xacro:property>
+
+  <xacro:property name="kinect_base1_joint_origin">
+    <origin xyz="-0.14 0.0 0.2" rpy="0 0 0" />
+  </xacro:property>
+
+  <xacro:property name="kinect_base2_joint_origin">
+    <origin xyz="0.035 0.0 0.19" rpy="0 0 0" />
+  </xacro:property>
+
+  <!-- imu-->
+
+  <xacro:property name="imu_parent" value="chassis" />
+
+
+
+
+  <!-- lidar base-->
+  <xacro:property name="lidar_parent" value="chassis" />
+
+  <xacro:property name="lidar_joint_origin">
+    <origin xyz="0.0 0.0 0.0315" rpy="0 0 0" />
+  </xacro:property>
+
+
+  <!-- kinect base-->
+
+  <xacro:property name="kinect_parent" value="kinect_base2" />
+  
+  <xacro:property name="kinect_joint_origin">
+    <origin xyz="0.03 0.0 0.055" rpy="0 0 0" />
+  </xacro:property>
+  <xacro:property name="cam_py" value="0" />
+
+
+
+  <!-- Generic Arm Connect -->
+  <xacro:property name="generic_arm_parent" value="upper_base" />
+
+  <xacro:property name="generic_arm_joint_origin">
+    <origin xyz="0.11 0.0 0.02" rpy="0 0 0" />
+  </xacro:property>
+
+  <!-- Generic Gripper Connect -->
+  <xacro:property name="generic_gripper_parent" value="wrist_3_link" />
+
+  <xacro:property name="ee_base_origin">
+    <origin xyz="0.0 0.0 0.004" rpy="${M_PI/2} 0 0" />
+  </xacro:property>
+  
+  <xacro:property name="ee_base_joint_origin">
+    <origin xyz="0.0 0.0 0.006" rpy="0 0 0" />
+  </xacro:property>
+
+
+
+  
+</robot>

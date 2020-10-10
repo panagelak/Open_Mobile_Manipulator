@@ -1,0 +1,75 @@
+<?xml version="1.0" ?>
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  
+
+  <!-- Wheels -->
+
+  <xacro:macro name="costum_wheel" params="prefix parent *origin gz">
+
+    <joint name="${prefix}_wheel_joint" type="continuous">
+      <parent link="${parent}"/>
+      <child link="${prefix}_wheel_link"/>
+      <xacro:insert_block name="origin" />
+      <axis xyz="0 1 0" rpy="0 0 0" />
+    </joint>
+
+    <link name="${prefix}_wheel_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="${M_PI/2} 0 0" />
+        <geometry>
+          <xacro:insert_block name="wheel_size" />
+        </geometry>
+        <material name="blue">
+          <color rgba="1 0 0 1"/>
+        </material>
+      </visual>
+
+      <collision>
+        <geometry>
+          <xacro:insert_block name="wheel_size" />
+        </geometry>
+        <origin xyz="0 0 0" rpy="${M_PI/2} 0 0" />
+      </collision>
+
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <mass value="0.477"/>
+        <inertia ixx="0.0013"  ixy="0"  ixz="0" iyy="0.0024" iyz="0" izz="0.0013" />
+      </inertial>
+
+    </link>
+
+
+
+
+    <!-- Transmission is important to link the joints and the controller-->
+    <transmission name="${prefix}_wheel_joint_trans">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="${prefix}_wheel_joint" >
+        <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="${prefix}_wheel_joint_motor">
+         <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
+
+    <xacro:if value="${gz}">
+
+      <gazebo reference="${prefix}_wheel_link">
+        <mu1 value="0.5"/>
+        <mu2 value="0.5"/>
+        <kp value="10000000.0" />
+        <kd value="1.0" />
+        <fdir1 value="1 0 0"/>
+        <!--turnGravityOff>false</turnGravityOff-->
+        <selfCollide>false</selfCollide>
+        <material>Gazebo/Blue</material>
+      </gazebo>
+      
+    </xacro:if>
+
+
+  </xacro:macro>
+
+</robot>

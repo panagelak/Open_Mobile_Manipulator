@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>multirobot_map_merge</name>
+  <version>2.1.1</version>
+
+  <description>Merging multiple maps without knowledge of initial
+  positions of robots.</description>
+
+  <author email="laeqten@gmail.com">Jiri Horner</author>
+  <maintainer email="laeqten@gmail.com">Jiri Horner</maintainer>
+  <license>BSD</license>
+  <url>http://wiki.ros.org/multirobot_map_merge</url>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>roscpp</depend>
+  <depend>geometry_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>map_msgs</depend>
+  <depend>tf2_geometry_msgs</depend>
+  <!-- used to get OpenCV -->
+  <depend>image_geometry</depend>
+
+  <test_depend>roslaunch</test_depend>
+  <test_depend>rosunit</test_depend>
+</package>

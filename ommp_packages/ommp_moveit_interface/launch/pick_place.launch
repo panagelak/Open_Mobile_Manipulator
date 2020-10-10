@@ -1,0 +1,8 @@
+<launch>
+
+
+  <node name="pick_place_server" pkg="ommp_moveit_interface" type="pick_place_server"
+    respawn="false" output="screen"/>
+
+
+</launch>

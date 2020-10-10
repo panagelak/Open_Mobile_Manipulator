@@ -1,0 +1,5 @@
+# Declare state to be tested
+path: flexbe_navigation_states.move_base_state
+class: MoveBaseState
+
+import_only: True

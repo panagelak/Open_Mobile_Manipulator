@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<package>
+  <name>differential_drive</name>
+  <version>0.1.0</version>
+  <description>
+    The differential_drive packageProvides some basic tools for interfacing a differential-drive 
+    robot with the ROS navigation stack.  The intent is to make this 
+    independent of specific robot implementation.
+  </description>
+
+  <maintainer email="jfstepha@gmail.com">Jon Stephan</maintainer>
+
+  <license>GPLv3</license>
+
+  <url type="repository">https://github.com/jstepha/differential_drive</url>
+  <url type="website">https://code.google.com/p/differential-drive/</url>
+
+  <author email="jfstepha@gmail.com">Jon Stephan</author>
+  <author email="markrose@acm.org">Mark Rose</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>rospy</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>tf</build_depend>
+  <run_depend>rospy</run_depend>
+  <run_depend>std_msgs</run_depend>
+  <run_depend>tf</run_depend>
+
+
+  <!-- The export tag contains other, unspecified, tags -->
+  <export>
+    <!-- Other tools can request additional information be placed here -->
+  </export>
+
+</package>
