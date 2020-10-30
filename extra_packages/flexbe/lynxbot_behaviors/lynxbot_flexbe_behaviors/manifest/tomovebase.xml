@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="tomovebase">
+
+	<executable package_path="lynxbot_flexbe_behaviors.tomovebase_sm" class="tomovebaseSM" />
+	<tagstring>xax</tagstring>
+	<author>panos</author>
+	<date>Sun Jan 26 2020</date>
+	<description>
+		xax
+	</description>
+
+
+	<!-- Contained Behaviors -->
+
+	<!-- Available Parameters -->
+	<params>
+
+		<param type="numeric" name="x" default="0" label="x" hint="Sets the x">
+			<min value="0" />
+			<max value="1" />
+		</param>
+
+		<param type="numeric" name="y" default="0" label="y" hint="Sets the y">
+			<min value="0" />
+			<max value="1" />
+		</param>
+
+		<param type="numeric" name="th" default="0" label="th" hint="Sets the th">
+			<min value="0" />
+			<max value="1" />
+		</param>
+
+	</params>
+
+
+</behavior>

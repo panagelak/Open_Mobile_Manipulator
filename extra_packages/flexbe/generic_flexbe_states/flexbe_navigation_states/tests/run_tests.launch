@@ -1,0 +1,14 @@
+<launch>
+        <arg name="path" value="$(find flexbe_navigation_states)/tests" />
+
+        <!-- Run with simulation. -->
+
+        <include file="$(find flexbe_testing)/launch/flexbe_testing.launch">
+                <arg name="compact_format" value="true" />
+                <arg name="testcases" value="
+
+                        $(arg path)/move_base_state_import.test
+
+                " />
+        </include>
+</launch>

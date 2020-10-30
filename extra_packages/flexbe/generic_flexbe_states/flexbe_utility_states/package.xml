@@ -1,0 +1,22 @@
+<package>
+  <name>flexbe_utility_states</name>
+  <version>1.0.0</version>
+  <description>
+     Provides a collection of generic states mainly for development and debugging purposes.
+  </description>
+  <maintainer email="philipp.schillinger@de.bosch.com">Philipp Schillinger</maintainer>
+  <maintainer email="sm2296@cornell.edu">Spyros Maniatopoulos</maintainer>
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <run_depend>rospy</run_depend>
+  <run_depend>flexbe_core</run_depend>
+  <run_depend>flexbe_testing</run_depend>
+  <run_depend>roslaunch</run_depend>
+
+  <export>
+    <flexbe_states />
+  </export>
+
+</package>

@@ -1,0 +1,5 @@
+# Declare state to be tested
+path: flexbe_utility_states.stop_record_logs_state
+class: StopRecordLogsState
+
+import_only: True

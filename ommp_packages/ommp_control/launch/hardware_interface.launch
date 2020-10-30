@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+
+  <!--Load Hardware Interface Configuration to param server -->
+  <rosparam file="$(find ommp_control)/config/hardware_interface.yaml" command="load"/>
+  <!-- start hardware interface node for the arm -->
+  <node name="ommp_hardware_interface" pkg="ommp_hardware_interface" type="ommp_hw_main"
+          output="screen" launch-prefix=""/>
+
+</launch>

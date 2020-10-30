@@ -1,0 +1,14 @@
+<?xml version="1.0" ?>
+<launch>
+
+
+
+  <include file="$(find ommp_real_moveit_config)/launch/move_group.launch">
+    <arg name="publish_monitored_planning_scene" value="true" />
+    <arg name="allow_trajectory_execution" value="true"/>
+    <arg name="info" value="true"/>
+    <arg name="load_robot_description" value="false" />
+  </include>
+
+
+</launch>

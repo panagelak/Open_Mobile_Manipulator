@@ -1,0 +1,19 @@
+<launch>
+  <!--Include description and control launch files-->
+  <include file="$(find sensor_stick)/launch/robot_description.launch"/>
+  <include file="$(find sensor_stick)/launch/robot_control.launch"/>
+
+  <!--Launch a gazebo world-->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch"/>
+
+  <!--spawn a robot in gazebo world-->
+  <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+  args="-urdf -param robot_description -x 0 -y 1.8 -z 0 -R 0 -P 0 -Y 0 -model sensor_stick"/>
+
+  <!-- cloud transformer-->
+  <node name="cloud_transformer" pkg="sensor_stick" type="cloud_transformer" respawn="false"/>
+
+  <!-- The feature extractor node -->
+  <node name="feature_extractor" pkg="sensor_stick" type="feature_extractor" respawn="false"/>
+
+</launch>

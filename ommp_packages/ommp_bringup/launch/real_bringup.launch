@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<launch>
+
+  <!-- robot parameters -->
+  <arg name="sim" default="false"/>
+  <arg name="robot" default="ommp_real"/>
+  <arg name="with_laser" default="true"/>
+  <arg name="with_rosserial" default="true"/>
+  <arg name="with_moveit" default="true"/>
+  <arg name="with_navigation" default="false"/>
+  <arg name="with_gmapping" default="false"/>
+  <arg name="with_amcl" default="false"/>
+  <arg name="with_teleop" default="false"/>
+
+  
+  
+
+  <!-- Load the Robot description -->
+  <include file="$(find ommp_description)/launch/description.launch">
+    <arg name="robot" value="$(arg robot)" />
+    <arg name="sim" value="$(arg sim)" />
+  </include>
+
+  <!-- start hardware interface node for the ommp -->
+  <include file="$(find ommp_control)/launch/hardware_interface.launch"/>
+
+  <!-- Load the Robot Controllers -->
+  <include file="$(find ommp_control)/launch/control.launch"/>
+  
+  <!-- Start the LIDAR driver -->
+  <group if="$(arg with_laser)">
+    <node name="ydlidar_node"  pkg="ydlidar"  type="ydlidar_node" output="screen" respawn="false" >
+      <rosparam file="$(find ommp_bringup)/config/start/ydlidar_params.yaml" command="load" />
+    </node>    
+  </group>
+
+  <!-- Transforms Joint_states to appropiate servo commmands for rosserial -->
+  <!-- Arm is a clone of joint_States - perfect execution -->
+  <node name="Pub_to_PCA9685_Driver" pkg="ommp_bringup" type="Pub_to_PCA9685_Driver" respawn="false" 
+  output="screen"/>
+  
+  <!-- Load the PCA9685 Driver -->
+  <node name="PCA9685_driver" pkg="pwm_pca9685" type="pca9685_node" respawn="false" 
+  output="screen"/>
+
+
+  <!-- Start rosserial Arduino node -->
+  <group if="$(arg with_rosserial)">
+    <node name="serial_node" pkg="rosserial_python" type="serial_node.py" output="screen">
+        <rosparam file="$(find ommp_bringup)/config/start/serial_params.yaml" command="load" />
+    </node>
+  </group>
+
+
+  <!-- moveit -->
+  <group if="$(arg with_moveit)">
+    <include file="$(find ommp_moveit_interface)/launch/moveit.launch"/>
+    <node name="set_start_arm_pos" pkg="ommp_moveit_interface" type="set_start_pos.py" respawn="false" 
+    output="screen"/> 
+  </group>
+
+
+  <group if="$(arg with_navigation)">
+    <include file="$(find ommp_navigation)/launch/navigation_main.launch"/>
+  </group>
+  <group if="$(arg with_gmapping)">
+    <include file="$(find ommp_navigation)/launch/gmapping_main.launch"/>
+  </group>
+  <group if="$(arg with_amcl)">
+    <include file="$(find ommp_navigation)/launch/amcl_main.launch"/>
+  </group>
+  <group if="$(arg with_teleop)">
+    <include file="$(find ommp_control)/launch/teleop.launch"/>
+  </group>
+
+  <!-- camera relay-->
+  <node name="Camera_Relay" pkg="ommp_bringup" type="Camera_Relay" respawn="false" 
+  output="screen"/>
+
+
+
+  <!-- Kinect motors pitch -->
+  <!--node name="Kinect_AUX" pkg="kinect_aux" type="kinect_aux_node" respawn="false" 
+  output="screen"/-->
+
+  <!-- Comment : to start Kinect driver I use docker run the following command-->
+  <!--docker start kinect && docker exec kinect /bin/bash -->
+
+
+  <!-- Optional laser odometry publish tf? -->
+  <!--node pkg="rf2o_laser_odometry" type="rf2o_laser_odometry_node" name="rf2o_laser_odometry" output="screen">
+    <rosparam file="$(find ommp_bringup)/config/rf2o_laser_odometry_params.yaml" command="load" />
+  </node-->
+
+  <!-- Optional EKF Sensor Fusion -->
+  <!--node pkg="robot_localization" type="ekf_localization_node" name="ekf_localization">
+    <rosparam file="$(find ommp_control)/config/ekf_localization.yaml" command="load" />
+    <remap from="odometry/filtered" to="odometry/filtered"/>
+  </node-->
+
+
+
+</launch>

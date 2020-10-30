@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<launch>
+
+  <!-- GDB functionality -->
+  <arg name="debug" default="false" />
+  <arg unless="$(arg debug)" name="launch_prefix" value="" />
+  <arg     if="$(arg debug)" name="launch_prefix" value="gdb --ex run --args" />
+
+  <group ns="ommp">
+
+    <!-- Load hardware interface -->
+    <node name="test_trajectory" pkg="ros_control_boilerplate" type="test_trajectory"
+          output="screen" launch-prefix="$(arg launch_prefix)">
+      <param name="action_topic" value="/ommp/position_trajectory_controller/follow_joint_trajectory/"/>
+      <rosparam file="$(find ros_control_boilerplate)/ommp_control/config/ommp_controllers.yaml" command="load"/>
+    </node>
+
+  </group>
+
+</launch>

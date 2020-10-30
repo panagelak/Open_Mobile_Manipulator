@@ -1,0 +1,15 @@
+##Description: Moves robot arm to a specified sequence of poses.
+
+#goal definition
+
+integration/PropertyValuePair[] joints
+float32 endEffectorVelocity
+float32 endEffectorAcceleration
+float32 timeoutSeconds #if this action cannot be completed within this time period it should be considered failed.
+integration/ActionRequest action_request
+---
+#result definition
+integration/ActionResult action_result
+---
+#feedback
+integration/ActionFeedback action_feedback

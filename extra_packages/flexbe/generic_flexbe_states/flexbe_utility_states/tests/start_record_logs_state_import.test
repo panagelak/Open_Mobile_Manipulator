@@ -1,0 +1,5 @@
+# Declare state to be tested
+path: flexbe_utility_states.start_record_logs_state
+class: StartRecordLogsState
+
+import_only: True

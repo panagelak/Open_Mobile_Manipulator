@@ -1,0 +1,203 @@
+<?xml version="1.0" ?>
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  
+
+  <!-- Hardware Interface e.g Pos Eff -->
+  <xacro:property name="transmission_hw_interface" value="hardware_interface/PositionJointInterface" />
+
+  <!-- enable safety limits -->
+  <xacro:property name="safety_limits" value="false" />
+  <xacro:property name="safety_pos_margin" value="0.15" />
+  <xacro:property name="safety_k_position" value="20" />
+
+
+
+
+  <!-- Inertia parameters -->
+  <xacro:property name="use_dummy_inertial" value="false" /> 
+    <!-- Arm -->
+    <xacro:property name="arm_base_mass" value="4.0" /> 
+    <xacro:property name="shoulder_mass" value="7.778" />
+    <xacro:property name="upper_arm_mass" value="12.93" />
+    <xacro:property name="forearm_mass" value="3.87" />
+    <xacro:property name="wrist_1_mass" value="1.96" />
+    <xacro:property name="wrist_2_mass" value="1.96" />
+    <xacro:property name="wrist_3_mass" value="0.202" />
+    <!-- Gripper -->
+    <xacro:property name="ee_base_mass" value="0.1" /> 
+    <xacro:property name="finger1_mass" value="0.1" />
+    <xacro:property name="finger2_mass" value="0.1" />
+
+  <!-- Link sizes -->
+
+  <!-- Factor to reduce the collision dimensions by -->  
+  <xacro:property name="collision_factor" value="0.5" />
+
+    <!-- Arm --> 
+    <xacro:property name="arm_base_length" value="0.04" />
+    <xacro:property name="arm_base_radius" value="0.04" />
+
+    <xacro:property name="shoulder_length" value="0.04" />
+    <xacro:property name="shoulder_radius" value="0.01" />
+
+    <xacro:property name="upper_arm_length" value="0.115" />
+    <xacro:property name="upper_arm_radius" value="0.014" />
+
+    <xacro:property name="forearm_length" value="0.142" />
+    <xacro:property name="forearm_radius" value="0.01" />
+
+    <xacro:property name="wrist_1_length" value="0.02" />
+    <xacro:property name="wrist_1_radius" value="0.01" />
+
+    <xacro:property name="wrist_2_length" value="0.026" />
+    <xacro:property name="wrist_2_radius" value="0.007" />
+
+    <xacro:property name="wrist_3_length" value="0.006" />
+    <xacro:property name="wrist_3_radius" value="0.004" />
+
+    <!-- Gripper -->
+    <xacro:property name="ee_base_x" value="0.012" />
+    <xacro:property name="ee_base_y" value="0.004" />
+    <xacro:property name="ee_base_z" value="0.05" />
+
+    <xacro:property name="finger1_x" value="0.012" />
+    <xacro:property name="finger1_y" value="0.002" />
+    <xacro:property name="finger1_z" value="0.03" />
+
+    <xacro:property name="finger2_x" value="0.012" />
+    <xacro:property name="finger2_y" value="0.002" />
+    <xacro:property name="finger2_z" value="0.03" />
+
+  <!-- Arm Limits -->
+  <xacro:property name="shoulder_pan_lower_limit" value="${M_PI * -1.0}" />
+  <xacro:property name="shoulder_pan_upper_limit" value="${M_PI * 1.0}" />
+  <xacro:property name="shoulder_lift_lower_limit" value="${M_PI * -1.0}" />
+  <xacro:property name="shoulder_lift_upper_limit" value="${M_PI * 1.336}" />
+  <xacro:property name="elbow_lower_limit" value="${M_PI * 0.0}" />
+  <xacro:property name="elbow_upper_limit" value="${M_PI * 1.2036}" />
+  <xacro:property name="wrist_1_upper_limit" value="${M_PI * 1.0}" />
+  <xacro:property name="wrist_1_lower_limit" value="${M_PI * -1.0}" />
+  <xacro:property name="wrist_2_upper_limit" value="${M_PI * 1.0}" />
+  <xacro:property name="wrist_2_lower_limit" value="${M_PI * -1.0}" />
+  <xacro:property name="wrist_3_upper_limit" value="${M_PI * 1.0}" />
+  <xacro:property name="wrist_3_lower_limit" value="${M_PI * -1.0}" />
+
+  <!-- Gripper Limits -->
+  <xacro:property name="finger1_lower_limit" value="0.0" />
+  <xacro:property name="finger1_upper_limit" value="0.025" />
+  <xacro:property name="finger2_lower_limit" value="0.0" />
+  <xacro:property name="finger2_upper_limit" value="0.025" />
+
+
+  <!-- Arm Joint Axis -->
+  <xacro:property name="shoulder_pan_joint_axis">
+    <axis xyz="0 0 1"/>
+  </xacro:property>
+  <xacro:property name="shoulder_lift_joint_axis">
+    <axis xyz="0 1 0"/>
+  </xacro:property>
+  <xacro:property name="elbow_joint_axis">
+    <axis xyz="0 1 0"/>
+  </xacro:property>
+  <xacro:property name="wrist_1_joint_axis">
+    <axis xyz="0 0 1"/>
+  </xacro:property>
+  <xacro:property name="wrist_2_joint_axis">
+    <axis xyz="0 1 0"/>
+  </xacro:property>
+  <xacro:property name="wrist_3_joint_axis">
+    <axis xyz="0 0 1"/>
+  </xacro:property>
+
+  <!-- Gripper Joint Axis -->
+  <xacro:property name="finger1_joint_axis">
+    <axis xyz="0 1 0"/>
+  </xacro:property>
+  <xacro:property name="finger2_joint_axis">
+    <axis xyz="0 1 0"/>
+  </xacro:property>
+
+
+  <!-- Arm Origings -->
+  <xacro:property name="arm_base_origin">
+    <origin xyz="0.0 0.0 0.02" rpy="0 0 0" />
+  </xacro:property>
+  <xacro:property name="arm_base_joint_origin">
+    <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+  </xacro:property>
+
+  <xacro:property name="shoulder_origin">
+    <origin xyz="0.045 0.0 0.02" rpy="0 0 0" />
+  </xacro:property>
+  <xacro:property name="shoulder_pan_joint_origin">
+    <origin xyz="0.0 0.0 0.02" rpy="0 0 0" />
+  </xacro:property>
+
+  <xacro:property name="upper_arm_origin">
+    <origin xyz="0.0 0.0 0.05525" rpy="0 0 0" />
+  </xacro:property>
+  <xacro:property name="shoulder_lift_joint_origin">
+    <origin xyz="0.045 0.0 0.05" rpy="0 0 0" />
+  </xacro:property>
+
+  <xacro:property name="forearm_origin">
+    <origin xyz="0.0 0.0 0.071" rpy="0 0 0" />
+  </xacro:property>
+  <xacro:property name="elbow_joint_origin">
+    <origin xyz="-0.02 0.0 0.115" rpy="0 0 0" />
+  </xacro:property>
+
+  <xacro:property name="wrist_1_origin">
+    <origin xyz="0.0 0.0 0.01" rpy="0 0 0" />
+  </xacro:property>
+  <xacro:property name="wrist_1_joint_origin">
+    <origin xyz="0.0 0.0 0.142" rpy="0 0 0" />
+  </xacro:property>
+
+  <xacro:property name="wrist_2_origin">
+    <origin xyz="0.0 0.0 0.013" rpy="0 0 0" />
+  </xacro:property>
+  <xacro:property name="wrist_2_joint_origin">
+    <origin xyz="0.0 0.0 0.02" rpy="0 0 0" />
+  </xacro:property>
+
+  <xacro:property name="wrist_3_origin">
+    <origin xyz="0.0 0.0 0.003" rpy="0 0 0" />
+  </xacro:property>
+  <xacro:property name="wrist_3_joint_origin">
+    <origin xyz="0.0 0.0 0.026" rpy="0 0 0" />
+  </xacro:property>
+
+  <!-- Gripper Origings -->
+
+
+  <xacro:property name="finger1_origin">
+    <origin xyz="0.0 0.0 0.015" rpy="0 0 0" />
+  </xacro:property>
+  <xacro:property name="finger1_joint_origin">
+    <origin xyz="0.0 -0.025 0.004" rpy="0 0 0" />
+  </xacro:property>
+
+  <xacro:property name="finger2_origin">
+    <origin xyz="0.0 0.0 0.015" rpy="0 0 0" />
+  </xacro:property>
+  <xacro:property name="finger2_joint_origin">
+    <origin xyz="0.0 0.025 0.004" rpy="0 0 ${M_PI}" />
+  </xacro:property>
+
+
+  <!-- Kinect Base -->
+  <xacro:property name="kinect_base_joint_origin">
+    <origin xyz="1.2 0.0 0.01" rpy="0 0 0" />
+  </xacro:property>
+  <xacro:property name="kinect_base_length" value="0.5" />
+  <xacro:property name="kinect_base_radius" value="0.03" />
+  <!-- Kinect Sensor -->
+
+  <xacro:property name="kinect_parent" value="kinect_base" />
+  <xacro:property name="kinect_joint_origin">
+    <origin xyz="0.0 0.0 ${kinect_base_length*0.5 + 0.1 }" rpy="0 ${M_PI * 0.2} ${M_PI}" />
+  </xacro:property>
+  
+</robot>

@@ -1,0 +1,9 @@
+bool add
+string planning_frame
+string object_id
+float32 size_x
+float32 size_y
+float32 size_z
+geometry_msgs/Pose object_pose
+---
+bool success

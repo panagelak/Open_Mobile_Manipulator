@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+
+  <xacro:if value="$(arg sim)">
+      <!-- Include Ydlidar Plugin -->
+      <xacro:include filename="$(find ommp_description)/urdf/sensors/imu/imu.gazebo.xacro" />
+
+      <xacro:imu_gazebo_sensor />
+
+  </xacro:if>
+
+  <!-- imu Link -->
+  <xacro:macro name="imu_sensor" params="parent">
+    <link name="imu_link">
+
+      <inertial>
+        <mass value="0.001"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <inertia
+            ixx="1e-6" ixy="0" ixz="0"
+            iyy="1e-6" iyz="0"
+            izz="1e-6"
+        />
+      </inertial>
+
+    </link>
+
+    <joint type="fixed" name="imu_joint">
+      <child link="imu_link"/>
+      <parent link="${parent}"/>
+    </joint>
+  </xacro:macro>
+  
+</robot>

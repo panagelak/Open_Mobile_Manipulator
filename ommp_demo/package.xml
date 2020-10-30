@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>ommp_demo</name>
+  <version>0.1.0</version>
+  <description>The ommp_demo package</description>
+
+  <maintainer email="panagiotis.angelakis.robot@gmail.com">LMS</maintainer>
+
+  <license>BSD</license>
+
+  <author >Panos</author>
+
+  <depend>roscpp</depend>
+  <depend>roslib</depend>
+  <depend>actionlib</depend>
+  <depend>integration</depend>
+  <depend>move_base_msgs</depend>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <export>
+
+  </export>
+
+</package>
