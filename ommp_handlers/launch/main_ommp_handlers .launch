@@ -19,7 +19,7 @@
     </node>
 
     <!--Service Server to find the distance between two frames-->
-    <node pkg="ommp_handlers" type="get_frame_distance_server_node" name="get_frame_distance_server_node" output="screen"/>
+    <!--node pkg="ommp_handlers" type="get_frame_distance_server_node" name="get_frame_distance_server_node" output="screen"/-->
     <!--Service Server to Add a Collsion box in the Planning Interface-->
     <node pkg="ommp_handlers" type="add_planning_box_server_node" name="add_planning_box_server_node" output="screen"/>
 

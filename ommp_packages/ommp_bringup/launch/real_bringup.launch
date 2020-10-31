@@ -5,13 +5,13 @@
   <!-- robot parameters -->
   <arg name="sim" default="false"/>
   <arg name="robot" default="ommp_real"/>
-  <arg name="with_laser" default="true"/>
-  <arg name="with_rosserial" default="true"/>
-  <arg name="with_moveit" default="true"/>
-  <arg name="with_navigation" default="false"/>
-  <arg name="with_gmapping" default="false"/>
-  <arg name="with_amcl" default="false"/>
-  <arg name="with_teleop" default="false"/>
+  <arg name="laser" default="true"/>
+  <arg name="rosserial" default="true"/>
+  <arg name="moveit" default="true"/>
+  <arg name="navigation" default="false"/>
+  <arg name="gmapping" default="false"/>
+  <arg name="amcl" default="false"/>
+  <arg name="teleop" default="false"/>
 
   
   
@@ -29,7 +29,7 @@
   <include file="$(find ommp_control)/launch/control.launch"/>
   
   <!-- Start the LIDAR driver -->
-  <group if="$(arg with_laser)">
+  <group if="$(arg laser)">
     <node name="ydlidar_node"  pkg="ydlidar"  type="ydlidar_node" output="screen" respawn="false" >
       <rosparam file="$(find ommp_bringup)/config/start/ydlidar_params.yaml" command="load" />
     </node>    
@@ -46,7 +46,7 @@
 
 
   <!-- Start rosserial Arduino node -->
-  <group if="$(arg with_rosserial)">
+  <group if="$(arg rosserial)">
     <node name="serial_node" pkg="rosserial_python" type="serial_node.py" output="screen">
         <rosparam file="$(find ommp_bringup)/config/start/serial_params.yaml" command="load" />
     </node>
@@ -54,23 +54,23 @@
 
 
   <!-- moveit -->
-  <group if="$(arg with_moveit)">
+  <group if="$(arg moveit)">
     <include file="$(find ommp_moveit_interface)/launch/moveit.launch"/>
     <node name="set_start_arm_pos" pkg="ommp_moveit_interface" type="set_start_pos.py" respawn="false" 
     output="screen"/> 
   </group>
 
 
-  <group if="$(arg with_navigation)">
+  <group if="$(arg navigation)">
     <include file="$(find ommp_navigation)/launch/navigation_main.launch"/>
   </group>
-  <group if="$(arg with_gmapping)">
+  <group if="$(arg gmapping)">
     <include file="$(find ommp_navigation)/launch/gmapping_main.launch"/>
   </group>
-  <group if="$(arg with_amcl)">
+  <group if="$(arg amcl)">
     <include file="$(find ommp_navigation)/launch/amcl_main.launch"/>
   </group>
-  <group if="$(arg with_teleop)">
+  <group if="$(arg teleop)">
     <include file="$(find ommp_control)/launch/teleop.launch"/>
   </group>
 
